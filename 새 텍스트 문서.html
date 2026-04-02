@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>제46회 장애인의 날 4.20 챌린지</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #2ecc71;
+            --accent-color: #ff4757;
+            --bg-color: #f0f4f8;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+            text-align: center;
+            width: 360px;
+            position: relative;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .main-slogan {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            line-height: 1.4;
+            margin-bottom: 0.8rem;
+        }
+
+        .sub-text {
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            word-break: keep-all;
+        }
+
+        #timer {
+            font-size: 6.5rem;
+            font-weight: 900;
+            margin: 1.2rem 0;
+            color: #222;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -3px;
+            transition: color 0.3s ease;
+        }
+
+        .controls button {
+            padding: 1.4rem;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .start { background-color: var(--primary-color); color: white; }
+        .stop { background-color: var(--accent-color); color: white; }
+        
+        .reset-link {
+            background: none;
+            border: none;
+            color: #aaa;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* 성공 시 덮어씌워질 화면 */
+        #successOverlay {
+            display: none; 
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 30px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2.5rem;
+            box-sizing: border-box;
+            z-index: 100;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .success-icon { font-size: 4.5rem; margin-bottom: 1rem; }
+        .success-msg { font-size: 1.3rem; font-weight: 700; line-height: 1.6; word-break: keep-all; }
+        .loading-text { margin-top: 2rem; font-size: 0.95rem; opacity: 0.9; }
+
+        .promise-text { font-size: 0.9rem; color: #bbb; margin-top: 1.5rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="gameUI">
+        <div class="main-slogan">"4월 20일,<br>우리의 마음이 맞닿는 시간 4.20초"</div>
+        <div class="sub-text">
+            장애인의 날을 기억하는 가장 즐거운 방법!<br>
+            <strong>4.20초 근처</strong>에서 멈춰주세요.
+        </div>
+        
+        <div id="timer">0.00</div>
+
+        <div class="controls">
+            <button id="mainBtn" class="start" onclick="handleTimer()">챌린지 시작!</button>
+            <button class="reset-link" onclick="location.reload()">다시 하기</button>
+        </div>
+        <div class="promise-text">함께하는 세상, 4.20초의 약속</div>
+    </div>
+
+    <div id="successOverlay">
+        <div class="success-icon">🎊</div>
+        <div class="success-msg">
+            축하합니다!<br>
+            4월 20일 장애인의 날을<br>
+            기억해주셔서 감사합니다.
+        </div>
+        <div class="loading-text">잠시 후 응모 페이지로 이동합니다...</div>
+    </div>
+</div>
+
+<audio id="successSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_062561592c.mp3" preload="auto"></audio>
+
+<script>
+    // 🔗 여기에 네이버 폼 주소를 넣어주세요!
+    const NAVER_FORM_URL = "https://naver.me/이곳에주소를입력하세요"; 
+
+    let startTime, timerInterval, running = false;
+    const timerDisplay = document.getElementById('timer');
+    const mainBtn = document.getElementById('mainBtn');
+    const successOverlay = document.getElementById('successOverlay');
+    const successSound = document.getElementById('successSound');
+
+    function handleTimer() {
+        if (!running) {
+            start();
+        } else {
+            stop();
+        }
+    }
+
+    function start() {
+        running = true;
+        startTime = Date.now();
+        mainBtn.textContent = '지금 정지!';
+        mainBtn.className = 'stop';
+        timerDisplay.style.color = '#222';
+        
+        timerInterval = setInterval(() => {
+            timerDisplay.textContent = ((Date.now() - startTime) / 1000).toFixed(2);
+        }, 10);
+    }
+
+    function stop() {
+        running = false;
+        clearInterval(timerInterval);
+        
+        let finalTime = parseFloat(timerDisplay.textContent);
+
+        // ±0.5초 배리어프리 판정 (3.70 ~ 4.70)
+        if (finalTime >= 3.70 && finalTime <= 4.70) {
+            timerDisplay.textContent = "4.20"; // 보정
+            timerDisplay.style.color = '#2ecc71';
+            mainBtn.style.visibility = 'hidden'; // 화면 고정용 숨김
+            
+            try { successSound.play(); } catch(e) {} 
+
+            // 1. 3초 동안 성공한 기록(4.20) 화면 유지 (인증샷/녹화용)
+            setTimeout(() => {
+                // 2. 초록색 성공 메시지 창 노출
+                successOverlay.style.display = 'flex';
+                
+                // 3. 2.5초 후 네이버 폼으로 이동
+                setTimeout(() => {
+                    if(NAVER_FORM_URL.includes("naver.me")) {
+                        window.location.href = NAVER_FORM_URL;
+                    } else {
+                        alert("응모 폼 주소가 설정되지 않았습니다. 기획협력지원팀에 문의해주세요!");
+                    }
+                }, 2500);
+
+            }, 3000); 
+
+        } else {
+            timerDisplay.style.color = '#ff4757';
+            mainBtn.textContent = '아쉽네요! 다시 도전';
+            mainBtn.className = 'start';
+        }
+    }
+</script>
+
+</body>
+</html>
