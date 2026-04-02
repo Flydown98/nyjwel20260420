@@ -7,212 +7,181 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
         :root {
-            --primary-color: #007bff;
-            --secondary-color: #2ecc71;
-            --accent-color: #ff4757;
-            --bg-color: #f0f4f8;
+            --primary: #008170; /* 로고의 메인 청록색 계열 */
+            --point: #8db524;   /* 로고의 연두색 계열 */
+            --bg: #0f172a;
+            --card: rgba(255, 255, 255, 0.95);
         }
 
         body {
             font-family: 'Pretendard', sans-serif;
-            background-color: var(--bg-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            user-select: none;
-            -webkit-user-select: none;
+            background: var(--bg) url('https://www.transparenttextures.com/patterns/cubes.png');
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; color: #333;
         }
 
         .container {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
-            text-align: center;
-            width: 360px;
-            position: relative;
-            min-height: 480px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            background: var(--card);
+            width: 380px; padding: 2rem; border-radius: 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            text-align: center; position: relative; overflow: hidden;
+            border: 4px solid var(--primary);
         }
 
-        .main-slogan {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            line-height: 1.4;
-            margin-bottom: 0.8rem;
-        }
+        /* 로고 영역 */
+        .logo-area { width: 100%; margin-bottom: 1.5rem; }
+        .logo-area img { max-width: 250px; height: auto; }
 
-        .sub-text {
-            font-size: 0.95rem;
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 1rem;
-            word-break: keep-all;
-        }
+        .main-title { font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-bottom: 0.5rem; line-height: 1.4; }
+        .sub-title { font-size: 0.9rem; color: #666; margin-bottom: 1.5rem; }
 
+        /* 모드 선택 스위치 */
+        .mode-selector {
+            display: flex; background: #eee; border-radius: 50px; padding: 5px; margin-bottom: 2rem;
+        }
+        .mode-btn {
+            flex: 1; padding: 10px; border: none; border-radius: 50px; cursor: pointer;
+            font-weight: 700; transition: 0.3s; background: none; color: #888;
+        }
+        .mode-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+        /* 타이머 전광판 스타일 */
+        .timer-box {
+            background: #222; border-radius: 20px; padding: 2rem 1rem; margin-bottom: 2rem;
+            border: 5px solid #444; box-shadow: inset 0 0 20px rgba(0,0,0,1);
+        }
         #timer {
-            font-size: 6.5rem;
-            font-weight: 900;
-            margin: 1.2rem 0;
-            color: #222;
-            font-variant-numeric: tabular-nums;
-            letter-spacing: -3px;
-            transition: color 0.3s ease;
+            font-size: 6rem; font-weight: 900; color: #ffcc00;
+            text-shadow: 0 0 20px rgba(255, 204, 0, 0.7);
+            font-variant-numeric: tabular-nums; letter-spacing: -2px;
         }
 
-        .controls button {
-            padding: 1.4rem;
-            font-size: 1.4rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        /* 메인 버튼 */
+        .btn-main {
+            width: 100%; padding: 1.5rem; font-size: 1.5rem; font-weight: 900;
+            border: none; border-radius: 25px; cursor: pointer;
+            background: linear-gradient(135deg, var(--primary), var(--point));
+            color: white; box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: 0.2s; margin-bottom: 1rem;
         }
+        .btn-main:active { transform: scale(0.96); }
+        .btn-main.stop { background: linear-gradient(135deg, #ff4757, #ff6b81); }
 
-        .start { background-color: var(--primary-color); color: white; }
-        .stop { background-color: var(--accent-color); color: white; }
-        
-        .reset-link {
-            background: none;
-            border: none;
-            color: #aaa;
-            margin-top: 15px;
-            font-size: 0.95rem;
-            text-decoration: underline;
-            cursor: pointer;
+        /* 성공/실패 안내 레이어 */
+        #overlay {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 129, 112, 0.95); color: white;
+            flex-direction: column; justify-content: center; align-items: center;
+            z-index: 100; animation: fadeIn 0.5s ease;
         }
-
-        /* 성공 시 덮어씌워질 화면 */
-        #successOverlay {
-            display: none; 
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--secondary-color);
-            color: white;
-            border-radius: 30px;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 2.5rem;
-            box-sizing: border-box;
-            z-index: 100;
-            animation: fadeIn 0.4s ease forwards;
-        }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .success-icon { font-size: 4.5rem; margin-bottom: 1rem; }
-        .success-msg { font-size: 1.3rem; font-weight: 700; line-height: 1.6; word-break: keep-all; }
-        .loading-text { margin-top: 2rem; font-size: 0.95rem; opacity: 0.9; }
+        .success-icon { font-size: 5rem; margin-bottom: 1rem; }
+        .success-msg { font-size: 1.2rem; font-weight: 700; line-height: 1.6; padding: 0 2rem; }
 
-        .promise-text { font-size: 0.9rem; color: #bbb; margin-top: 1.5rem; }
+        .reset-link { color: #aaa; text-decoration: underline; cursor: pointer; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="gameUI">
-        <div class="main-slogan">"4월 20일,<br>우리의 마음이 맞닿는 시간 4.20초"</div>
-        <div class="sub-text">
-            장애인의 날을 기억하는 가장 즐거운 방법!<br>
-            <strong>4.20초 근처</strong>에서 멈춰주세요.
-        </div>
-        
-        <div id="timer">0.00</div>
-
-        <div class="controls">
-            <button id="mainBtn" class="start" onclick="handleTimer()">챌린지 시작!</button>
-            <button class="reset-link" onclick="location.reload()">다시 하기</button>
-        </div>
-        <div class="promise-text">함께하는 세상, 4.20초의 약속</div>
+    <div class="logo-area">
+        <img src="logo.jpg" alt="남양주시시장애인복지관">
     </div>
 
-    <div id="successOverlay">
-        <div class="success-icon">🎊</div>
+    <div class="main-title">"4월 20일, 마음이 닿는 시간"</div>
+    
+    <div class="mode-selector">
+        <button id="normalMode" class="mode-btn active" onclick="setMode('normal')">일반 모드<br><small>범위 ±0.5초</small></button>
+        <button id="expertMode" class="mode-btn" onclick="setMode('expert')">고수 모드<br><small>완벽한 정지!</small></button>
+    </div>
+
+    <div class="timer-box">
+        <div id="timer">0.00</div>
+    </div>
+
+    <button id="mainBtn" class="btn-main" onclick="handleAction()">챌린지 시작!</button>
+    <div class="reset-link" onclick="location.reload()">다시 하기</div>
+
+    <div id="overlay">
+        <div class="success-icon">🏆</div>
         <div class="success-msg">
-            축하합니다!<br>
-            4월 20일 장애인의 날을<br>
-            기억해주셔서 감사합니다.
+            <span id="modeName">일반 모드</span> 성공!<br>
+            4월 20일 장애인의 날을<br>기억해주셔서 감사합니다.
         </div>
-        <div class="loading-text">잠시 후 응모 페이지로 이동합니다...</div>
+        <p style="margin-top:2rem; font-size:0.8rem; opacity:0.8;">잠시 후 응모 폼으로 이동합니다...</p>
     </div>
 </div>
 
-<audio id="successSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_062561592c.mp3" preload="auto"></audio>
+<audio id="snd" src="https://cdn.pixabay.com/audio/2021/08/04/audio_062561592c.mp3"></audio>
 
 <script>
-    // 🔗 여기에 네이버 폼 주소를 넣어주세요!
     const NAVER_FORM_URL = "https://naver.me/이곳에주소를입력하세요"; 
-
+    let currentMode = 'normal';
     let startTime, timerInterval, running = false;
+
     const timerDisplay = document.getElementById('timer');
     const mainBtn = document.getElementById('mainBtn');
-    const successOverlay = document.getElementById('successOverlay');
-    const successSound = document.getElementById('successSound');
+    const overlay = document.getElementById('overlay');
+    const snd = document.getElementById('snd');
 
-    function handleTimer() {
+    function setMode(mode) {
+        if(running) return;
+        currentMode = mode;
+        document.getElementById('normalMode').classList.toggle('active', mode === 'normal');
+        document.getElementById('expertMode').classList.toggle('active', mode === 'expert');
+    }
+
+    function handleAction() {
         if (!running) {
-            start();
+            running = true;
+            startTime = Date.now();
+            mainBtn.textContent = 'STOP!';
+            mainBtn.classList.add('stop');
+            timerDisplay.style.color = '#ffcc00';
+            timerInterval = setInterval(() => {
+                timerDisplay.textContent = ((Date.now() - startTime) / 1000).toFixed(2);
+            }, 10);
         } else {
-            stop();
+            running = false;
+            clearInterval(timerInterval);
+            checkResult();
         }
     }
 
-    function start() {
-        running = true;
-        startTime = Date.now();
-        mainBtn.textContent = '지금 정지!';
-        mainBtn.className = 'stop';
-        timerDisplay.style.color = '#222';
-        
-        timerInterval = setInterval(() => {
-            timerDisplay.textContent = ((Date.now() - startTime) / 1000).toFixed(2);
-        }, 10);
-    }
-
-    function stop() {
-        running = false;
-        clearInterval(timerInterval);
-        
+    function checkResult() {
         let finalTime = parseFloat(timerDisplay.textContent);
+        let success = false;
 
-        // ±0.5초 배리어프리 판정 (3.70 ~ 4.70)
-        if (finalTime >= 3.70 && finalTime <= 4.70) {
-            timerDisplay.textContent = "4.20"; // 보정
-            timerDisplay.style.color = '#2ecc71';
-            mainBtn.style.visibility = 'hidden'; // 화면 고정용 숨김
-            
-            try { successSound.play(); } catch(e) {} 
+        if (currentMode === 'normal') {
+            // 일반 모드: ±0.5초 범위 (3.70 ~ 4.70)
+            if (finalTime >= 3.70 && finalTime <= 4.70) {
+                timerDisplay.textContent = "4.20";
+                success = true;
+            }
+        } else {
+            // 고수 모드: 정확히 4.20초 (보정 없음)
+            if (finalTime === 4.20) {
+                success = true;
+            }
+        }
 
-            // 1. 3초 동안 성공한 기록(4.20) 화면 유지 (인증샷/녹화용)
+        if (success) {
+            timerDisplay.style.color = '#00ff00';
+            mainBtn.style.visibility = 'hidden';
+            document.getElementById('modeName').textContent = currentMode === 'normal' ? '일반 모드' : '고수 모드';
+            try { snd.play(); } catch(e) {}
+
             setTimeout(() => {
-                // 2. 초록색 성공 메시지 창 노출
-                successOverlay.style.display = 'flex';
-                
-                // 3. 2.5초 후 네이버 폼으로 이동
+                overlay.style.display = 'flex';
                 setTimeout(() => {
-                    if(NAVER_FORM_URL.includes("naver.me")) {
-                        window.location.href = NAVER_FORM_URL;
-                    } else {
-                        alert("응모 폼 주소가 설정되지 않았습니다. 기획협력지원팀에 문의해주세요!");
-                    }
-                }, 2500);
-
-            }, 3000); 
-
+                    window.location.href = NAVER_FORM_URL;
+                }, 3000);
+            }, 2500);
         } else {
             timerDisplay.style.color = '#ff4757';
-            mainBtn.textContent = '아쉽네요! 다시 도전';
-            mainBtn.className = 'start';
+            mainBtn.textContent = '실패! 다시 도전';
+            mainBtn.classList.remove('stop');
         }
     }
 </script>
