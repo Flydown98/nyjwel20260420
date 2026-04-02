@@ -154,13 +154,13 @@
         let success = false;
 
         if (currentMode === 'normal') {
-            // 일반 모드: ±0.5초 범위 (3.70 ~ 4.70)
+            // 일반 모드
             if (finalTime >= 3.70 && finalTime <= 4.70) {
                 timerDisplay.textContent = "4.20";
                 success = true;
             }
         } else {
-            // 고수 모드: 정확히 4.20초 (보정 없음)
+            // 고수 모드
             if (finalTime === 4.20) {
                 success = true;
             }
