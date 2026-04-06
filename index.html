@@ -5,121 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>제46회 장애인의 날 4.20 챌린지 - 남양주시장애인복지관</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <style>
+        /* (기존 CSS 스타일 전체 동일하게 유지) */
         :root {
-            /* 복지관 메인 컬러 벤치마킹 */
-            --nyj-blue: #00569f;    /* 신뢰의 블루 (CI 메인) */
-            --nyj-sky: #00a4e4;     /* 청량한 스카이블루 */
-            --nyj-green: #68b030;   /* 성장의 그린 (point) */
-            --nyj-yellow: #f7b731;  /* 스톱워치 텍스트 */
-            --nyj-gray-bg: #f4f7f9; /* 홈페이지 배경색 */
-            --app-card-bg: #ffffff; /* 컨텐츠 카드 배경 */
-            
-            --expert-purple: #a55eea;
-            --perfect-gold: #fff200;
+            --nyj-blue: #00569f; --nyj-sky: #00a4e4; --nyj-green: #68b030;
+            --nyj-yellow: #f7b731; --nyj-gray-bg: #f4f7f9; --app-card-bg: #ffffff;
+            --expert-purple: #a55eea; --perfect-gold: #fff200;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        
-        body { 
-            font-family: 'Pretendard', sans-serif; 
-            /* 복지관 홈페이지 풍의 풍성한 배경 설정 */
-            background-color: var(--nyj-gray-bg);
-            background-image: 
-                /* 1. 상단 그라데이션 */
-                linear-gradient(180deg, rgba(0, 86, 159, 0.1) 0%, rgba(244, 247, 249, 0) 50%),
-                /* 2. 복지관 풍의 부드러운 기하학 패턴 (CSS로 구현) */
-                radial-gradient(circle at 10% 20%, rgba(0, 164, 228, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(104, 176, 48, 0.05) 0%, transparent 20%);
-            color: #333; 
-            user-select: none; 
-            overflow-x: hidden; 
-            min-height: 100vh; 
-            transition: background-color 0.4s; 
-        }
-
-        /* 실패 시 붉은 톤 제어 */
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--nyj-gray-bg); background-image: linear-gradient(180deg, rgba(0, 86, 159, 0.1) 0%, rgba(244, 247, 249, 0) 50%), radial-gradient(circle at 10% 20%, rgba(0, 164, 228, 0.05) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(104, 176, 48, 0.05) 0%, transparent 20%); color: #333; user-select: none; overflow-x: hidden; min-height: 100vh; transition: background-color 0.4s; }
         body.fail-bg { background: #ffebee !important; background-image: none !important; }
 
         header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px); padding: 1rem; display: flex; justify-content: center; align-items: center; position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 15px rgba(0,0,0,0.05); border-bottom: 2px solid var(--nyj-blue); }
         header img { height: 40px; width: auto; }
 
-        /* 홈페이지 메인 카드 레이아웃 (허전함 해결 핵심) */
-        .app-container { 
-            max-width: 480px; 
-            margin: 0 auto; 
-            padding: 7rem 1.5rem 3rem; 
-            text-align: center; 
-            background: var(--app-card-bg);
-            border-radius: 40px; 
-            box-shadow: 0 15px 50px rgba(0,0,0,0.08); /* 깊고 부드러운 그림자 */
-            border: 1px solid rgba(0,0,0,0.03);
-            margin-top: 6rem;
-        }
+        .app-container { max-width: 480px; margin: 0 auto; padding: 7rem 1.5rem 3rem; text-align: center; background: var(--app-card-bg); border-radius: 40px; box-shadow: 0 15px 50px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.03); margin-top: 6rem; }
 
-        /* 타이틀 섹션 (홈페이지 헤드라인 스타일) */
         .title-area { margin-bottom: 2.5rem; border-bottom: 1px solid #eee; padding-bottom: 1.5rem; }
         .title-area h2 { font-size: 1.1rem; color: var(--nyj-sky); font-weight: 700; margin-bottom: 8px; }
         .title-area h1 { font-size: 2.1rem; font-weight: 900; line-height: 1.2; color: var(--nyj-blue); letter-spacing: -1.2px; }
         .title-area span { color: var(--nyj-green); }
         .title-area p { font-size: 0.95rem; color: #666; margin-top: 12px; line-height: 1.6; word-break: keep-all; }
 
-        /* 모드 선택 탭 (복지관 버튼 스타일 반영) */
         .mode-selector { display: flex; background: #eee; border-radius: 50px; padding: 5px; margin: 0 auto 2rem; max-width: 350px; }
         .mode-btn { flex: 1; padding: 12px; border: none; border-radius: 50px; cursor: pointer; font-weight: 700; transition: 0.3s; background: none; color: #777; font-size: 0.9rem; }
         .mode-btn.active.normal { background: var(--nyj-blue); color: #fff; box-shadow: 0 4px 10px rgba(0, 86, 159, 0.3); }
         .mode-btn.active.expert { background: var(--expert-purple); color: #fff; box-shadow: 0 4px 10px rgba(165, 94, 234, 0.3); }
 
-        /* 대형 스톱워치 (이미지 스타일 유지) */
-        .stopwatch-wrapper {
-            background: #111827;
-            width: 250px; height: 250px;
-            margin: 0 auto 2.5rem;
-            border-radius: 50%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: 10px solid #2d3748;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15), inset 0 0 30px rgba(0,0,0,0.6);
-            position: relative;
-        }
+        .stopwatch-wrapper { background: #111827; width: 250px; height: 250px; margin: 0 auto 2.5rem; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 10px solid #2d3748; box-shadow: 0 20px 40px rgba(0,0,0,0.15), inset 0 0 30px rgba(0,0,0,0.6); position: relative; }
         .stopwatch-wrapper::before { content:''; position:absolute; top:-25px; left:50%; transform:translateX(-50%); width:40px; height:18px; background:#4a5568; border-radius:5px 5px 0 0; }
         .stopwatch-wrapper::after { content:''; position:absolute; top:-12px; left:50%; transform:translateX(-50%); width:60px; height:6px; background:#2d3748; border-radius:3px; }
-        
         #timer { font-size: 4.5rem; font-weight: 900; color: var(--nyj-sky); font-variant-numeric: tabular-nums; letter-spacing: -2px; text-shadow: 0 0 20px rgba(0, 164, 228, 0.5); z-index: 10; margin-top: 15px; transition: color 0.3s; }
         #eBadge { font-size: 0.8rem; color: var(--expert-purple); font-weight: bold; margin-top: 5px; z-index: 10; background: rgba(165,94,234,0.15); padding: 3px 10px; border-radius: 10px; }
 
-        /* 메인 버튼 (홈페이지 메인 Call-to-Action 스타일) */
         .btn-main { width: 100%; max-width: 350px; padding: 1.3rem; font-size: 1.4rem; font-weight: 800; border: none; border-radius: 50px; cursor: pointer; background: linear-gradient(to right, var(--nyj-blue), var(--nyj-sky)); color: #fff; box-shadow: 0 10px 25px rgba(0, 86, 159, 0.3); transition: transform 0.2s, box-shadow 0.2s; display: block; margin: 0 auto; }
         .btn-main:active { transform: scale(0.97); box-shadow: 0 5px 15px rgba(0, 86, 159, 0.2); }
         .btn-main.stop { background: #ff4757 !important; box-shadow: 0 10px 25px rgba(255, 71, 87, 0.3) !important; }
 
-        /* 캡처 유도 UI */
         #captureUI { display: none; background: #e0f2f1; border: 2px dashed var(--nyj-green); padding: 1.2rem; border-radius: 20px; color: var(--nyj-blue); font-weight: bold; animation: pulse 1.5s infinite; margin: -10px auto 0; max-width: 350px; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
-
-        /* 실패 복구 버튼 */
         #retryBtn { margin-top:1.8rem; color:#888; text-decoration:underline; cursor:pointer; font-size:0.95rem; display:none; font-weight: 700; }
 
-        /* 리더보드 (홈페이지 게시판 카드 스타일) */
         .leaderboard-section { margin-top: 4rem; padding: 2rem 1rem; border-top: 2px solid #eee; }
         .leaderboard-section h3 { font-size: 1.3rem; color: var(--nyj-blue); font-weight: 800; margin-bottom: 1.5rem; display: flex; justify-content: center; align-items: center; gap: 8px; }
         .leaderboard-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.03); border: 1px solid #eee; }
         .leaderboard-table th, td { padding: 15px 5px; text-align: center; border-bottom: 1px solid #f1f1f1; font-size: 0.95rem; }
         .leaderboard-table th { color: #888; font-weight: 600; font-size: 0.85rem; background: #f9f9f9; }
 
-        /* 푸터 (홈페이지 푸터 정보 반영) */
         footer { margin-top: 5rem; padding: 3rem 1.5rem; background: #fff; border-top: 1px solid #eee; text-align: left; color: #666; font-size: 0.85rem; line-height: 1.7; }
         footer strong { color: #333; font-weight: 700; }
-        footer a { color: var(--nyj-blue); text-decoration: none; }
 
-        /* 정보 입력 모달 (고급스러움 강화) */
         #infoModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 86, 159, 0.6); z-index: 3000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(8px); }
-        .modal-content { background: #fff; width: 100%; max-width: 400px; padding: 3rem 2.5rem; border-radius: 35px; text-align: left; box-shadow: 0 25px 60px rgba(0,0,0,0.2); animation: modalIn 0.5s ease; }
+        .modal-content { background: #fff; width: 100%; max-width: 400px; padding: 2.5rem 2rem; border-radius: 35px; text-align: left; box-shadow: 0 25px 60px rgba(0,0,0,0.2); animation: modalIn 0.5s ease; max-height: 90vh; overflow-y: auto; }
         @keyframes modalIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .input-group { margin-bottom: 18px; }
+        
+        .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 0.85rem; color: #444; margin-bottom: 6px; font-weight: 700; }
-        .input-group input { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; background: #f8fafc; transition: 0.3s; }
+        .input-group input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; background: #f8fafc; transition: 0.3s; }
         .input-group input:focus { outline: none; border-color: var(--nyj-sky); background: #fff; box-shadow: 0 0 10px rgba(0, 164, 228, 0.1); }
-        .btn-submit { width: 100%; padding: 17px; background: var(--nyj-green); color: #fff; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; font-size: 1.1rem; margin-top: 20px; box-shadow: 0 8px 20px rgba(104, 176, 48, 0.3); }
+        
+        /* [수정] 주소 검색창 전용 스타일 */
+        .zip-row { display: flex; gap: 8px; margin-bottom: 8px; }
+        .zip-row input { background: #e2e8f0; cursor: not-allowed; flex: 1; }
+        .btn-zip { background: #4a5568; color: #fff; border: none; border-radius: 12px; padding: 0 15px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+        
+        .btn-submit { width: 100%; padding: 17px; background: var(--nyj-green); color: #fff; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; font-size: 1.1rem; margin-top: 10px; box-shadow: 0 8px 20px rgba(104, 176, 48, 0.3); }
 
         .confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1999; display: none; }
         .confetti-piece { position: absolute; width: 10px; height: 15px; animation: fall 3s linear infinite; }
@@ -134,7 +86,7 @@
     <div class="title-area">
         <h2>"행복한 인연, 향기로운 동행"</h2>
         <h1>제46회 장애인의 날<br><span>4.20 챌린지</span></h1>
-        <p>장애인의 날(4월 20일)을 기억하는 가장 즐거운 방법!<br>4.20초 성공 화면을 캡처하여 인증해주세요.</p>
+        <p>장애인의 날(4월 20일)을 기억하는 가장 즐거운 방법!<br>성공 화면을 캡처하여 특별한 이벤트에 응모하세요.</p>
     </div>
 
     <div class="mode-selector">
@@ -170,19 +122,29 @@
 <footer>
     <p><strong>남양주시장애인복지관</strong></p>
     <p>주소: 경기도 남양주시 홍유릉로 273-1</p>
-    <p>대표전화: 031-592-7150 | 팩스: 031-592-7155</p>
+    <p>대표전화: 031-592-7150</p>
     <p>Copyright © 남양주시장애인복지관. All rights reserved.</p>
     <p style="margin-top:1rem; opacity:0.8;">본 챌린지는 기획협력지원팀에서 운영합니다.</p>
 </footer>
 
 <div id="infoModal">
     <div class="modal-content">
-        <h3 style="color:var(--nyj-blue); margin-bottom:1.8rem; text-align:center; font-weight:900;">🎊 명예의 전당 등록 🎊</h3>
-        <p style="font-size:0.85rem; color:#666; text-align:center; margin-bottom:2rem; line-height:1.5;">캡처를 완료하셨나요?<br>순위 반영과 경품 발송을 위해 정보를 입력해주세요.</p>
+        <h3 id="modalTitle" style="color:var(--nyj-blue); margin-bottom:1rem; text-align:center; font-weight:900;">🎊 이벤트 응모 🎊</h3>
+        <p style="font-size:0.85rem; color:#666; text-align:center; margin-bottom:1.5rem; line-height:1.5;">경품 발송을 위해 정보를 정확히 입력해주세요.</p>
         
         <div class="input-group"><label>성함 (실명)</label><input type="text" id="uName" placeholder="예) 홍길동"></div>
-        <div class="input-group"><label>연락처</label><input type="text" id="uPhone" placeholder="010-0000-0000"></div>
-        <div class="input-group"><label>주소 (경품 수령지)</label><input type="text" id="uAddr" placeholder="상세 주소를 입력해주세요"></div>
+        
+        <div class="input-group"><label>연락처</label><input type="tel" id="uPhone" placeholder="숫자만 입력해주세요" maxlength="13"></div>
+        
+        <div class="input-group">
+            <label>주소 (경품 수령지)</label>
+            <div class="zip-row">
+                <input type="text" id="uZip" placeholder="우편번호" readonly>
+                <button type="button" class="btn-zip" onclick="openDaumPostcode()">주소 검색</button>
+            </div>
+            <input type="text" id="uAddr1" placeholder="기본 주소" style="margin-bottom:8px; background:#e2e8f0; cursor:not-allowed;" readonly>
+            <input type="text" id="uAddr2" placeholder="상세 주소를 입력해주세요">
+        </div>
         
         <label style="font-size:0.75rem; color:#888; display:flex; align-items:flex-start; margin:20px 0; line-height:1.4; cursor:pointer;">
             <input type="checkbox" id="uConsent" style="margin-right:8px; margin-top:2px;">
@@ -190,7 +152,7 @@
         </label>
         
         <button class="btn-submit" onclick="submitData()">등록 완료 및 응모</button>
-        <button style="width:100%; background:none; border:none; color:#aaa; margin-top:18px; cursor:pointer; font-weight:bold; font-size:0.9rem;" onclick="closeModal()">취소하고 메인으로</button>
+        <button style="width:100%; background:none; border:none; color:#aaa; margin-top:15px; cursor:pointer; font-weight:bold; font-size:0.9rem;" onclick="closeModal()">취소하고 메인으로</button>
     </div>
 </div>
 
@@ -199,11 +161,8 @@
 <audio id="sndNormal" src="https://cdn.pixabay.com/audio/2021/08/04/audio_062561592c.mp3"></audio>
 
 <script>
-    // [중요] 기존의 자바스크립트 로직(스프레드시트 연동, 캡처 타임, 모달 등)은 
-    // 이전 버전과 완전히 동일하게 유지하여 안정성을 확보했습니다.
-
+    // 해찬 님의 실제 스크립트 주소 (변경 안 됨)
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyc-Yx4zNdLbBA2p9403SZ-6RAbarQ6R9eQNxjAOuJCK5XsyKnGaflq2rVnyLh3cDxRCQ/exec";
-    const NORMAL_FORM = "https://naver.me/일반모드주소";
 
     let start, interval, running = false, mode = 'normal';
     const timer = document.getElementById('timer');
@@ -211,6 +170,29 @@
     const lBody = document.getElementById('lBody');
     const captureUI = document.getElementById('captureUI');
     const captureCount = document.getElementById('captureCount');
+
+    // [추가] 연락처 자동 하이픈 기능
+    document.getElementById('uPhone').addEventListener('input', function(e) {
+        let val = this.value.replace(/[^0-9]/g, '');
+        if(val.length > 3 && val.length <= 7) {
+            this.value = val.slice(0,3) + '-' + val.slice(3);
+        } else if(val.length > 7) {
+            this.value = val.slice(0,3) + '-' + val.slice(3,7) + '-' + val.slice(7,11);
+        } else {
+            this.value = val;
+        }
+    });
+
+    // [추가] 다음 주소 검색 API 띄우기
+    function openDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                document.getElementById('uZip').value = data.zonecode;
+                document.getElementById('uAddr1').value = data.address;
+                document.getElementById('uAddr2').focus(); // 상세주소로 커서 이동
+            }
+        }).open();
+    }
 
     function loadRanks() {
         fetch(SCRIPT_URL + "?t=" + new Date().getTime())
@@ -254,12 +236,9 @@
 
         if(win) {
             if(mode === 'normal') timer.textContent = "4.20";
-            
-            // 성공 시 스톱워치 네온 블루 유지 (시인성)
             timer.style.textShadow = '0 0 25px rgba(0, 164, 228, 0.8)';
-            
-            mainBtn.style.display = 'none'; // 버튼 숨기기
-            captureUI.style.display = 'block'; // 캡처 안내 UI 표시
+            mainBtn.style.display = 'none';
+            captureUI.style.display = 'block';
             
             if(mode === 'expert' && timer.textContent === "4.200") {
                 document.getElementById('sndFan').play().catch(()=>{});
@@ -269,33 +248,32 @@
 
             makeConfetti();
 
-            let wait = mode === 'normal' ? 5 : 30; // 일반 5초, 고수 30초 캡처타임
+            // [수정] 일반/고수 모두 캡처 시간 후 자체 모달 띄움 (네이버 폼 X)
+            let wait = mode === 'normal' ? 5 : 30; 
+            document.getElementById('modalTitle').textContent = mode === 'normal' ? "🎊 이벤트 응모 🎊" : "👑 명예의 전당 등록 👑";
             
             const cd = setInterval(() => {
                 captureCount.innerHTML = `지금 이 화면을 캡처하세요!<br><b>${wait}초</b> 후 등록 창으로 이동합니다.`;
                 if(wait <= 0) {
                     clearInterval(cd);
                     captureUI.style.display = 'none';
-                    if(mode === 'normal') location.href = NORMAL_FORM;
-                    else document.getElementById('infoModal').style.display = 'flex';
+                    document.getElementById('infoModal').style.display = 'flex';
                 }
                 wait--;
             }, 1000);
         } else {
-            // 실패 연출
             timer.style.color = '#ff4757';
             timer.style.textShadow = '0 0 20px rgba(255, 71, 87, 0.5)';
-            document.body.classList.add('fail-bg'); // 붉은 배경 클래스 추가
+            document.body.classList.add('fail-bg');
             mainBtn.textContent = '아쉽네요! 다시 도전';
             mainBtn.classList.remove('stop');
             document.getElementById('retryBtn').style.display = 'block';
         }
     }
 
-    // 실패 상태에서 다시 처음으로 복구
     function resetGame() {
-        document.body.classList.remove('fail-bg'); // 배경색 원래대로
-        timer.style.color = 'var(--nyj-sky)'; // 스톱워치 텍스트 색상 원래대로
+        document.body.classList.remove('fail-bg');
+        timer.style.color = 'var(--nyj-sky)';
         timer.style.textShadow = '0 0 20px rgba(0, 164, 228, 0.5)';
         timer.textContent = mode === 'normal' ? "0.00" : "0.000";
         mainBtn.textContent = '도전 시작!';
@@ -309,23 +287,37 @@
     function submitData() {
         const name = document.getElementById('uName').value;
         const phone = document.getElementById('uPhone').value;
-        const addr = document.getElementById('uAddr').value;
+        const zip = document.getElementById('uZip').value;
+        const addr1 = document.getElementById('uAddr1').value;
+        const addr2 = document.getElementById('uAddr2').value;
         const consent = document.getElementById('uConsent').checked;
 
-        if(!name || !phone || !addr || !consent) { alert("모든 정보를 입력하고 동의해주세요."); return; }
+        if(!name || !phone || !zip || !addr1 || !consent) { alert("상세주소를 제외한 모든 필수 정보를 입력하고 동의해주세요."); return; }
 
+        const fullAddress = `[${zip}] ${addr1} ${addr2}`.trim();
         const btn = document.querySelector('.btn-submit');
         btn.textContent = "등록 중..."; btn.disabled = true;
 
+        // [수정] 모드 정보(일반/고수)를 함께 서버로 보냄
         fetch(SCRIPT_URL, {
             method: "POST", mode: "no-cors",
-            body: JSON.stringify({ name, phone, address: addr, time: timer.textContent, consent: "동의" })
+            body: JSON.stringify({ 
+                name: name, 
+                phone: phone, 
+                address: fullAddress, 
+                time: timer.textContent, 
+                consent: "동의",
+                mode: mode === 'normal' ? '일반' : '고수'
+            })
         }).then(() => {
-            alert("명예의 전당에 성공적으로 등록되었습니다!");
+            alert(mode === 'normal' ? "이벤트 응모가 완료되었습니다!" : "명예의 전당에 성공적으로 등록되었습니다!");
             closeModal();
-            loadRanks(); // 랭킹 갱신
+            // 입력칸 비우기
+            document.querySelectorAll('input').forEach(input => input.value = '');
+            document.getElementById('uConsent').checked = false;
+            loadRanks();
         }).catch(() => {
-            alert("일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+            alert("일시적인 오류가 발생했습니다. 다시 시도해주세요.");
             btn.textContent = "다시 시도"; btn.disabled = false;
         });
     }
@@ -334,7 +326,6 @@
         const c = document.getElementById('confetti');
         c.style.display = 'block';
         c.innerHTML = '';
-        // 복지관 메인 컬러(블루, 그린) 섞인 종이꽃
         const colors = ['#00a4e4','#00569f','#68b030','#f7b731','#fff'];
         for(let i=0; i<120; i++) {
             const p = document.createElement('div');
@@ -349,7 +340,7 @@
 
     function closeModal() {
         document.getElementById('infoModal').style.display = 'none';
-        resetGame(); // 창 닫으면 완전히 처음 상태로 리셋
+        resetGame();
     }
 
     window.onload = loadRanks;
