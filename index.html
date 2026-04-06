@@ -13,45 +13,40 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg); color: var(--text); -webkit-user-select: none; user-select: none; overflow-x: hidden; }
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg); color: var(--text); user-select: none; overflow-x: hidden; transition: background-color 0.3s; }
 
-        header { background: #fff; padding: 1rem; display: flex; justify-content: space-between; align-items: center; position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        header { background: #fff; padding: 1rem; display: flex; justify-content: center; align-items: center; position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
         header img { height: 35px; width: auto; }
 
-        #hero { padding: 8rem 1.5rem 3rem; text-align: center; background-image: radial-gradient(circle at top left, rgba(164, 252, 102, 0.1) 0%, transparent 40%); }
+        #hero { padding: 8rem 1.5rem 3rem; text-align: center; }
         .hero-text h1 { font-size: 1.8rem; font-weight: 900; color: var(--primary); line-height: 1.3; margin-bottom: 1rem; }
         .hero-text h1 span { color: var(--yellow); }
 
-        /* 모드 선택기 */
         .mode-selector { display: flex; background: rgba(0,0,0,0.05); border-radius: 50px; padding: 5px; margin: 0 auto 2rem; max-width: 350px; }
         .mode-btn { flex: 1; padding: 12px; border: none; border-radius: 50px; cursor: pointer; font-weight: 700; transition: 0.3s; background: none; color: #888; font-size: 0.9rem; }
         .mode-btn.active.normal { background: var(--primary); color: #fff; }
         .mode-btn.active.expert { background: var(--expert-purple); color: #fff; }
 
-        /* 타이머 전광판 */
         .timer-display { background: var(--dark-teal); border-radius: 30px; padding: 2.5rem 1rem; margin: 0 auto 2rem; border: 5px solid #2a2a2a; width: 100%; max-width: 350px; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); position: relative; }
         #timer { font-size: 5rem; font-weight: 900; color: var(--yellow); font-variant-numeric: tabular-nums; letter-spacing: -4px; text-shadow: 0 0 15px rgba(247, 183, 49, 0.6); }
-        #perfectLabel { display: none; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--perfect-gold); color: #000; padding: 5px 15px; border-radius: 10px; font-weight: 900; font-size: 0.8rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2); animation: bounce 0.5s infinite alternate; }
-        @keyframes bounce { from { transform: translateX(-50%) translateY(0); } to { transform: translateX(-50%) translateY(-5px); } }
 
-        .btn-main { width: 100%; max-width: 350px; padding: 1.4rem; font-size: 1.5rem; font-weight: 900; border: none; border-radius: 25px; cursor: pointer; background: linear-gradient(135deg, var(--accent), var(--yellow)); color: var(--dark-teal); box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin: 0 auto; display: block; }
-        .btn-main.stop { background: #ff4757; color: #fff; }
+        .btn-main { width: 100%; max-width: 350px; padding: 1.4rem; font-size: 1.5rem; font-weight: 900; border: none; border-radius: 25px; cursor: pointer; background: linear-gradient(135deg, var(--accent), var(--yellow)); color: var(--dark-teal); box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin: 0 auto; display: block; transition: 0.2s; }
+        .btn-main.stop { background: #ff4757 !important; color: #fff !important; }
 
-        /* 리더보드 */
         #leaderboard { padding: 3rem 1.2rem; max-width: 600px; margin: 0 auto; }
         .leaderboard-table { width: 100%; background: #fff; border-radius: 25px; border-collapse: collapse; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .leaderboard-table th, td { padding: 15px; text-align: center; border-bottom: 1px solid #eee; }
-        .leaderboard-table th { background: #fafafa; font-size: 0.8rem; color: #999; }
-        .rank { font-weight: 900; color: var(--primary); }
-        .perfect-row { background: rgba(247, 183, 49, 0.05); }
 
-        /* 오버레이 */
-        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 129, 112, 0.98); color: #fff; z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; text-align: center; backdrop-filter: blur(10px); }
-        #overlay.perfect-bg { background: radial-gradient(circle, #f7b731, #0c433c); }
-        .success-msg h2 { font-size: 2rem; font-weight: 900; margin-bottom: 10px; }
+        /* 정보 입력 모달 */
+        #infoModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: #fff; width: 100%; max-width: 400px; padding: 2rem; border-radius: 30px; text-align: left; color: #333; }
+        .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; font-size: 0.8rem; color: #666; margin-bottom: 4px; font-weight: 600; }
+        .input-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-size: 1rem; }
+        .btn-submit { width: 100%; padding: 15px; background: var(--primary); color: #fff; border: none; border-radius: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; }
 
-        .tag-box { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; font-size: 0.9rem; color: var(--accent); line-height: 1.6; margin-top: 20px; text-align: left; border-left: 5px solid var(--accent); }
-
+        /* 성공/실패 연출 */
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); color: #fff; z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; text-align: center; }
         .confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1999; display: none; }
         .confetti-piece { position: absolute; width: 10px; height: 10px; animation: fall 3s linear infinite; }
         @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
@@ -61,53 +56,53 @@
 
 <header><img src="logo.jpg" alt="남양주시장애인복지관"></header>
 
-<main>
+<main id="mainContent">
     <section id="hero">
         <div class="hero-text">
-            <h1>"우리의 마음이<br>맞닿는 시간 <span>4.20초</span>"</h1>
+            <h1>우리의 마음이<br>맞닿는 시간 <span>4.20초</span></h1>
         </div>
 
         <div class="mode-selector">
-            <button id="mN" class="mode-btn active normal" onclick="setM('normal')">일반 모드<br><small>±0.5초 보정</small></button>
-            <button id="mE" class="mode-btn" onclick="setM('expert')">고수 모드<br><small>±0.1초 / 0.000s</small></button>
+            <button id="mN" class="mode-btn active normal" onclick="setMode('normal')">일반 모드</button>
+            <button id="mE" class="mode-btn" onclick="setMode('expert')">고수 모드</button>
         </div>
 
-        <div class="timer-display">
-            <div id="perfectLabel">완벽한 성공!!!</div>
+        <div class="timer-display" id="tDisplay">
             <div id="timer">0.00</div>
-            <div id="eBadge" style="display:none; color:var(--expert-purple); font-weight:bold; font-size:0.8rem; margin-top:5px;">[EXPERT MODE 0.000s]</div>
         </div>
 
         <button id="mainBtn" class="btn-main" onclick="handle()">챌린지 시작!</button>
-        <p style="margin-top:1.5rem; color:#aaa; text-decoration:underline; font-size:0.85rem; cursor:pointer;" onclick="location.reload()">다시 하기</p>
+        <p id="retryMsg" style="margin-top:1.5rem; color:#aaa; text-decoration:underline; font-size:0.85rem; cursor:pointer; display:none;" onclick="resetUI()">다시 도전하기</p>
     </section>
 
     <section id="leaderboard">
-        <h3 style="text-align:center; margin-bottom:1.5rem; color:var(--primary); font-weight:900;">🏆 고수 랭킹 (4.200초 근접순)</h3>
+        <h3 style="text-align:center; margin-bottom:1.5rem; color:var(--primary); font-weight:900;">🏆 실시간 고수 랭킹</h3>
         <table class="leaderboard-table">
-            <thead>
-                <tr><th>순위</th><th>닉네임</th><th>기록</th><th>차이</th></tr>
-            </thead>
-            <tbody id="lBody">
-                <tr><td colspan="4" style="color:#ccc; padding:3rem;">실시간 랭킹 로딩 중...</td></tr>
-            </tbody>
+            <thead><tr><th>순위</th><th>닉네임</th><th>기록</th></tr></thead>
+            <tbody id="lBody"><tr><td colspan="3">데이터 로딩 중...</td></tr></tbody>
         </table>
     </section>
 </main>
 
+<div id="infoModal">
+    <div class="modal-content">
+        <h3 style="margin-bottom:1rem; color:var(--primary);">🎊 기록 등록 및 응모 🎊</h3>
+        <div class="input-group"><label>성함</label><input type="text" id="uName"></div>
+        <div class="input-group"><label>연락처</label><input type="text" id="uPhone"></div>
+        <div class="input-group"><label>주소</label><input type="text" id="uAddr"></div>
+        <label style="font-size:0.75rem; color:#888; display:flex; align-items:center; margin-top:10px;">
+            <input type="checkbox" id="uConsent" style="margin-right:5px;"> 개인정보 수집 및 경품 발송에 동의합니다.
+        </label>
+        <button class="btn-submit" onclick="submitData()">등록 완료</button>
+        <button style="width:100%; background:none; border:none; color:#aaa; margin-top:10px; cursor:pointer;" onclick="closeModal()">닫기</button>
+    </div>
+</div>
+
 <div id="overlay">
-    <div id="winIcon" style="font-size:5rem; margin-bottom:1rem;">🏆</div>
-    <div class="success-msg">
-        <h2 id="winTitle">성공을 축하합니다!</h2>
-        <p id="waitTxt" style="opacity:0.8;"></p>
-    </div>
-    
-    <div id="eTags" style="display:none; width: 100%; max-width: 350px;">
-        <p style="font-size:0.85rem; margin-top:30px; font-weight:bold;">👇 댓글에 아래 태그를 복사해서 달아주세요!</p>
-        <div class="tag-box">
-            #남양주시장애인복지관 #4.20챌린지 #고수모드성공 #남양주배리어프리 #스무번의계절_스물한번째약속
-        </div>
-    </div>
+    <div style="font-size:4rem; margin-bottom:1rem;">🏆</div>
+    <h2 id="winTitle" style="margin-bottom:10px;">성공을 축하합니다!</h2>
+    <p id="waitTxt" style="opacity:0.8;"></p>
+    <button id="homeBtn" style="display:none; margin-top:2rem; padding:12px 30px; border-radius:50px; border:none; background:#fff; color:var(--primary); font-weight:bold;" onclick="location.reload()">메인으로 돌아가기</button>
 </div>
 
 <div id="confetti" class="confetti"></div>
@@ -117,51 +112,37 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyc-Yx4zNdLbBA2p9403SZ-6RAbarQ6R9eQNxjAOuJCK5XsyKnGaflq2rVnyLh3cDxRCQ/exec";
     const NORMAL_FORM = "https://naver.me/일반모드주소";
-    const EXPERT_FORM = "https://naver.me/고수모드주소";
 
     let start, interval, running = false, mode = 'normal';
     const timer = document.getElementById('timer');
     const mainBtn = document.getElementById('mainBtn');
     const lBody = document.getElementById('lBody');
 
-    // 랭킹 로드 (4.200 차이순 정렬은 서버 스크립트에서 처리됨)
     function loadRanks() {
-        fetch(SCRIPT_URL)
+        fetch(SCRIPT_URL + "?t=" + new Date().getTime())
         .then(res => res.json())
         .then(data => {
             lBody.innerHTML = '';
-            if(data.length === 0) {
-                lBody.innerHTML = '<tr><td colspan="4" style="padding:3rem; color:#888;">아직 등록된 고수가 없습니다!</td></tr>';
-                return;
-            }
             data.forEach((row, i) => {
-                const diff = Math.abs(4.200 - parseFloat(row[2])).toFixed(3);
-                const isPerfect = diff === "0.000";
-                lBody.innerHTML += `<tr class="${isPerfect ? 'perfect-row' : ''}">
-                    <td class="rank">${i+1}</td>
-                    <td style="font-weight:600;">${row[1]}</td>
-                    <td style="font-weight:bold; color:var(--expert-purple);">${row[2]}</td>
-                    <td style="font-size:0.75rem; color:#888;">${isPerfect ? '🎯 PERFECT' : diff + 's 차이'}</td>
-                </tr>`;
+                lBody.innerHTML += `<tr><td>${i+1}</td><td>${row.name}</td><td>${row.time}</td></tr>`;
             });
-        }).catch(() => { lBody.innerHTML = '<tr><td colspan="4" style="padding:3rem; color:#ff4757;">랭킹 데이터를 불러올 수 없습니다.</td></tr>'; });
+        });
     }
 
-    function setM(m) {
+    function setMode(m) {
         if(running) return;
         mode = m;
         document.getElementById('mN').className = 'mode-btn' + (m==='normal'?' active normal':'');
         document.getElementById('mE').className = 'mode-btn' + (m==='expert'?' active expert':'');
-        document.getElementById('eBadge').style.display = m==='expert' ? 'block' : 'none';
         timer.textContent = m === 'normal' ? "0.00" : "0.000";
     }
 
     function handle() {
         if(!running) {
             running = true; start = Date.now();
-            mainBtn.textContent = '지금 정지!'; mainBtn.classList.add('stop');
-            // 고수모드일 때 더 정밀한 인터벌 (1ms 타겟)
-            interval = setInterval(() => { 
+            mainBtn.textContent = 'STOP!'; mainBtn.classList.add('stop');
+            document.getElementById('retryMsg').style.display = 'none';
+            interval = setInterval(() => {
                 const elapsed = (Date.now() - start) / 1000;
                 timer.textContent = mode === 'normal' ? elapsed.toFixed(2) : elapsed.toFixed(3);
             }, mode === 'normal' ? 10 : 1);
@@ -174,80 +155,91 @@
     function check() {
         let tStr = timer.textContent;
         let tNum = parseFloat(tStr);
-        let win = false;
-        let perfect = (mode === 'expert' && tStr === "4.200");
-
-        if(mode === 'normal') {
-            if(tNum >= 3.70 && tNum <= 4.70) { timer.textContent = "4.20"; win = true; }
-        } else {
-            // 고수모드 성공 범위: ±0.1초 (4.100 ~ 4.300)
-            if(tNum >= 4.100 && tNum <= 4.300) { win = true; }
-        }
+        let win = (mode === 'normal') ? (tNum >= 3.70 && tNum <= 4.70) : (tNum >= 4.100 && tNum <= 4.300);
 
         if(win) {
-            timer.style.color = perfect ? 'var(--perfect-gold)' : (mode==='normal' ? 'var(--accent)' : 'var(--expert-purple)');
-            if(perfect) document.getElementById('perfectLabel').style.display = 'block';
+            if(mode === 'normal') timer.textContent = "4.20";
+            timer.style.color = var(--accent);
             mainBtn.style.visibility = 'hidden';
-
-            // 사운드 연출
-            if(perfect) {
+            
+            if(mode === 'expert' && tStr === "4.200") {
                 document.getElementById('sndFanfare').play();
                 document.getElementById('winTitle').textContent = "🎯 완벽한 성공!!!";
-                document.getElementById('winIcon').textContent = "👑";
-                document.getElementById('overlay').classList.add('perfect-bg');
             } else {
                 document.getElementById('sndNormal').play();
             }
 
-            makeConfetti(perfect);
-
-            if(mode === 'expert') {
-                const nick = prompt(perfect ? "👑 완벽한 성공! 명예의 전당에 등록할 이름을 입력하세요." : "고수 모드 성공! 리더보드에 등록할 이름을 입력하세요.");
-                if(nick) {
-                    fetch(SCRIPT_URL, {
-                        method: "POST",
-                        mode: "no-cors",
-                        body: JSON.stringify({ name: nick, time: tStr })
-                    }).then(() => loadRanks());
-                }
-            }
+            makeConfetti();
 
             let wait = mode === 'normal' ? 3 : 30;
-            const overlay = document.getElementById('overlay');
             const waitTxt = document.getElementById('waitTxt');
             
             const cd = setInterval(() => {
-                waitTxt.innerHTML = `기록 인증을 위해 <b>${wait}초</b>간 화면이 유지됩니다.<br>잠시 후 응모 페이지로 이동합니다.`;
+                waitTxt.innerHTML = `인증을 위해 <b>${wait}초</b>간 화면이 유지됩니다.`;
                 if(wait <= 0) {
                     clearInterval(cd);
-                    if(mode==='expert') document.getElementById('eTags').style.display = 'block';
-                    overlay.style.display = 'flex';
-                    setTimeout(() => { location.href = (mode==='normal'?NORMAL_FORM:EXPERT_FORM); }, 4000);
+                    if(mode === 'normal') location.href = NORMAL_FORM;
+                    else {
+                        document.getElementById('overlay').style.display = 'none';
+                        document.getElementById('infoModal').style.display = 'flex';
+                    }
                 }
                 wait--;
             }, 1000);
+            document.getElementById('overlay').style.display = 'flex';
         } else {
             timer.style.color = '#ff4757';
-            mainBtn.textContent = '다시 도전!'; mainBtn.classList.remove('stop');
+            document.body.style.backgroundColor = '#4a0000'; // 실패 시 배경색 변경
+            mainBtn.textContent = '실패! 다시 도전';
+            document.getElementById('retryMsg').style.display = 'block';
         }
     }
 
-    function makeConfetti(isPerfect) {
+    function resetUI() {
+        document.body.style.backgroundColor = 'var(--bg)';
+        timer.style.color = 'var(--yellow)';
+        timer.textContent = mode === 'normal' ? "0.00" : "0.000";
+        mainBtn.textContent = '챌린지 시작!';
+        mainBtn.classList.remove('stop');
+        mainBtn.style.visibility = 'visible';
+        document.getElementById('retryMsg').style.display = 'none';
+    }
+
+    function submitData() {
+        const name = document.getElementById('uName').value;
+        const phone = document.getElementById('uPhone').value;
+        const addr = document.getElementById('uAddr').value;
+        const consent = document.getElementById('uConsent').checked;
+
+        if(!name || !phone || !addr || !consent) { alert("모든 정보를 입력하고 동의해주세요."); return; }
+
+        fetch(SCRIPT_URL, {
+            method: "POST", mode: "no-cors",
+            body: JSON.stringify({ name, phone, address: addr, time: timer.textContent, consent: "동의" })
+        }).then(() => {
+            alert("등록되었습니다! 감사합니다.");
+            document.getElementById('infoModal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'flex';
+            document.getElementById('waitTxt').textContent = "고수 등록이 완료되었습니다.";
+            document.getElementById('homeBtn').style.display = 'block';
+            loadRanks();
+        });
+    }
+
+    function makeConfetti() {
         const c = document.getElementById('confetti');
         c.style.display = 'block';
-        c.innerHTML = '';
-        const count = isPerfect ? 200 : 100;
-        const colors = isPerfect ? ['#fff200', '#ffffff', '#fffa65'] : ['#a4fc66','#f7b731','#fff','#008170'];
-        for(let i=0; i<count; i++) {
+        for(let i=0; i<100; i++) {
             const p = document.createElement('div');
             p.className = 'confetti-piece';
             p.style.left = Math.random()*100+'vw';
-            p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+            p.style.backgroundColor = ['#a4fc66','#f7b731','#fff','#008170'][Math.floor(Math.random()*4)];
             p.style.animationDuration = (Math.random()*2+1)+'s';
-            p.style.animationDelay = Math.random()+'s';
             c.appendChild(p);
         }
     }
+
+    function closeModal() { document.getElementById('infoModal').style.display = 'none'; resetUI(); }
 
     window.onload = loadRanks;
 </script>
