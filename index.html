@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <style>
-        /* (기존 CSS 스타일 전체 동일하게 유지) */
         :root {
             --nyj-blue: #00569f; --nyj-sky: #00a4e4; --nyj-green: #68b030;
             --nyj-yellow: #f7b731; --nyj-gray-bg: #f4f7f9; --app-card-bg: #ffffff;
@@ -16,6 +15,8 @@
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { font-family: 'Pretendard', sans-serif; background-color: var(--nyj-gray-bg); background-image: linear-gradient(180deg, rgba(0, 86, 159, 0.1) 0%, rgba(244, 247, 249, 0) 50%), radial-gradient(circle at 10% 20%, rgba(0, 164, 228, 0.05) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(104, 176, 48, 0.05) 0%, transparent 20%); color: #333; user-select: none; overflow-x: hidden; min-height: 100vh; transition: background-color 0.4s; }
+        
+        /* 실패 시 배경색 */
         body.fail-bg { background: #ffebee !important; background-image: none !important; }
 
         header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px); padding: 1rem; display: flex; justify-content: center; align-items: center; position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 15px rgba(0,0,0,0.05); border-bottom: 2px solid var(--nyj-blue); }
@@ -46,7 +47,6 @@
 
         #captureUI { display: none; background: #e0f2f1; border: 2px dashed var(--nyj-green); padding: 1.2rem; border-radius: 20px; color: var(--nyj-blue); font-weight: bold; animation: pulse 1.5s infinite; margin: -10px auto 0; max-width: 350px; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
-        #retryBtn { margin-top:1.8rem; color:#888; text-decoration:underline; cursor:pointer; font-size:0.95rem; display:none; font-weight: 700; }
 
         .leaderboard-section { margin-top: 4rem; padding: 2rem 1rem; border-top: 2px solid #eee; }
         .leaderboard-section h3 { font-size: 1.3rem; color: var(--nyj-blue); font-weight: 800; margin-bottom: 1.5rem; display: flex; justify-content: center; align-items: center; gap: 8px; }
@@ -54,6 +54,7 @@
         .leaderboard-table th, td { padding: 15px 5px; text-align: center; border-bottom: 1px solid #f1f1f1; font-size: 0.95rem; }
         .leaderboard-table th { color: #888; font-weight: 600; font-size: 0.85rem; background: #f9f9f9; }
 
+        /* 푸터 정보 업데이트 */
         footer { margin-top: 5rem; padding: 3rem 1.5rem; background: #fff; border-top: 1px solid #eee; text-align: left; color: #666; font-size: 0.85rem; line-height: 1.7; }
         footer strong { color: #333; font-weight: 700; }
 
@@ -66,7 +67,6 @@
         .input-group input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; background: #f8fafc; transition: 0.3s; }
         .input-group input:focus { outline: none; border-color: var(--nyj-sky); background: #fff; box-shadow: 0 0 10px rgba(0, 164, 228, 0.1); }
         
-        /* [수정] 주소 검색창 전용 스타일 */
         .zip-row { display: flex; gap: 8px; margin-bottom: 8px; }
         .zip-row input { background: #e2e8f0; cursor: not-allowed; flex: 1; }
         .btn-zip { background: #4a5568; color: #fff; border: none; border-radius: 12px; padding: 0 15px; font-weight: bold; cursor: pointer; white-space: nowrap; }
@@ -105,8 +105,6 @@
         <div style="font-size:1.8rem; margin-bottom:8px;">📸</div>
         <div id="captureCount"></div>
     </div>
-
-    <p id="retryBtn" onclick="resetGame()">다시 도전하기</p>
 </div>
 
 <div style="max-width:480px; margin:0 auto; padding:0 1.5rem;">
@@ -122,8 +120,9 @@
 <footer>
     <p><strong>남양주시장애인복지관</strong></p>
     <p>주소: 경기도 남양주시 홍유릉로 273-1</p>
-    <p>대표전화: 031-592-7150</p>
-    <p>Copyright © 남양주시장애인복지관. All rights reserved.</p>
+    <p>대표전화: 031-592-7150 | 팩스: 031-592-8150</p>
+    <p>이메일: <a href="mailto:nyjwel@nyjwel.or.kr" style="color:var(--nyj-blue); text-decoration:none;">nyjwel@nyjwel.or.kr</a></p>
+    <p style="margin-top:0.5rem;">Copyright © 남양주시장애인복지관. All rights reserved.</p>
     <p style="margin-top:1rem; opacity:0.8;">본 챌린지는 기획협력지원팀에서 운영합니다.</p>
 </footer>
 
@@ -161,17 +160,15 @@
 <audio id="sndNormal" src="https://cdn.pixabay.com/audio/2021/08/04/audio_062561592c.mp3"></audio>
 
 <script>
-    // 해찬 님의 실제 스크립트 주소 (변경 안 됨)
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyc-Yx4zNdLbBA2p9403SZ-6RAbarQ6R9eQNxjAOuJCK5XsyKnGaflq2rVnyLh3cDxRCQ/exec";
 
-    let start, interval, running = false, mode = 'normal';
+    let start, interval, running = false, failed = false, mode = 'normal';
     const timer = document.getElementById('timer');
     const mainBtn = document.getElementById('mainBtn');
     const lBody = document.getElementById('lBody');
     const captureUI = document.getElementById('captureUI');
     const captureCount = document.getElementById('captureCount');
 
-    // [추가] 연락처 자동 하이픈 기능
     document.getElementById('uPhone').addEventListener('input', function(e) {
         let val = this.value.replace(/[^0-9]/g, '');
         if(val.length > 3 && val.length <= 7) {
@@ -183,13 +180,12 @@
         }
     });
 
-    // [추가] 다음 주소 검색 API 띄우기
     function openDaumPostcode() {
         new daum.Postcode({
             oncomplete: function(data) {
                 document.getElementById('uZip').value = data.zonecode;
                 document.getElementById('uAddr1').value = data.address;
-                document.getElementById('uAddr2').focus(); // 상세주소로 커서 이동
+                document.getElementById('uAddr2').focus(); 
             }
         }).open();
     }
@@ -213,13 +209,19 @@
         document.getElementById('mE').classList.toggle('active', m === 'expert');
         document.getElementById('eBadge').style.display = m === 'expert' ? 'block' : 'none';
         timer.textContent = m === 'normal' ? "0.00" : "0.000";
+        if(failed) resetGame();
     }
 
     function handle() {
+        // 실패 상태에서 버튼을 누르면 초기화 
+        if (failed) {
+            resetGame();
+            return;
+        }
+
         if(!running) {
             running = true; start = Date.now();
             mainBtn.textContent = 'STOP!'; mainBtn.classList.add('stop');
-            document.getElementById('retryBtn').style.display = 'none';
             interval = setInterval(() => {
                 const elapsed = (Date.now() - start) / 1000;
                 timer.textContent = mode === 'normal' ? elapsed.toFixed(2) : elapsed.toFixed(3);
@@ -235,6 +237,7 @@
         let win = (mode === 'normal') ? (tNum >= 3.70 && tNum <= 4.70) : (tNum >= 4.100 && tNum <= 4.300);
 
         if(win) {
+            failed = false;
             if(mode === 'normal') timer.textContent = "4.20";
             timer.style.textShadow = '0 0 25px rgba(0, 164, 228, 0.8)';
             mainBtn.style.display = 'none';
@@ -248,7 +251,6 @@
 
             makeConfetti();
 
-            // [수정] 일반/고수 모두 캡처 시간 후 자체 모달 띄움 (네이버 폼 X)
             let wait = mode === 'normal' ? 5 : 30; 
             document.getElementById('modalTitle').textContent = mode === 'normal' ? "🎊 이벤트 응모 🎊" : "👑 명예의 전당 등록 👑";
             
@@ -262,16 +264,17 @@
                 wait--;
             }, 1000);
         } else {
+            failed = true;
             timer.style.color = '#ff4757';
             timer.style.textShadow = '0 0 20px rgba(255, 71, 87, 0.5)';
             document.body.classList.add('fail-bg');
-            mainBtn.textContent = '아쉽네요! 다시 도전';
+            mainBtn.textContent = '다시 도전하기';
             mainBtn.classList.remove('stop');
-            document.getElementById('retryBtn').style.display = 'block';
         }
     }
 
     function resetGame() {
+        failed = false;
         document.body.classList.remove('fail-bg');
         timer.style.color = 'var(--nyj-sky)';
         timer.style.textShadow = '0 0 20px rgba(0, 164, 228, 0.5)';
@@ -279,7 +282,6 @@
         mainBtn.textContent = '도전 시작!';
         mainBtn.classList.remove('stop');
         mainBtn.style.display = 'block';
-        document.getElementById('retryBtn').style.display = 'none';
         captureUI.style.display = 'none';
         document.getElementById('confetti').style.display = 'none';
     }
@@ -298,7 +300,6 @@
         const btn = document.querySelector('.btn-submit');
         btn.textContent = "등록 중..."; btn.disabled = true;
 
-        // [수정] 모드 정보(일반/고수)를 함께 서버로 보냄
         fetch(SCRIPT_URL, {
             method: "POST", mode: "no-cors",
             body: JSON.stringify({ 
@@ -312,10 +313,10 @@
         }).then(() => {
             alert(mode === 'normal' ? "이벤트 응모가 완료되었습니다!" : "명예의 전당에 성공적으로 등록되었습니다!");
             closeModal();
-            // 입력칸 비우기
             document.querySelectorAll('input').forEach(input => input.value = '');
             document.getElementById('uConsent').checked = false;
             loadRanks();
+            btn.textContent = "등록 완료 및 응모"; btn.disabled = false;
         }).catch(() => {
             alert("일시적인 오류가 발생했습니다. 다시 시도해주세요.");
             btn.textContent = "다시 시도"; btn.disabled = false;
