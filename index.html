@@ -3,370 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>제46회 장애인의 날 기념 4.20 챌린지 - 남양주시시장애인복지관</title>
+    <title>제46회 장애인의 날 기념 4.20 챌린지 - 남양주시장애인복지관</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
         :root {
-            --primary: #008170; /* 복지관 메인 컬러 (청록색) */
-            --accent: #a4fc66;  /* 포인트 컬러 (연두색) */
-            --yellow: #f7b731;  /* 스톱워치 및 골드 포인트 */
-            --dark-teal: #0c433c; /* 어두운 배경색 */
-            --bg: #f8f9fa;      /* 메인 배경색 */
-            --text: #333;
-            --gray: #888;
-            --expert-purple: #a55eea; /* 고수 모드 포인트 */
+            --primary: #008170; --accent: #a4fc66; --yellow: #f7b731;
+            --dark-teal: #0c433c; --bg: #f8f9fa; --text: #333;
+            --expert-purple: #a55eea;
         }
 
-        /* 기본 스타일 리셋 */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { font-family: 'Pretendard', sans-serif; background-color: var(--bg); color: var(--text); -webkit-user-select: none; user-select: none; overflow-x: hidden; }
 
-        /* 세밀한 여백 제어 */
-        .section-padding { padding: 4rem 1.5rem; }
-        @media (max-width: 768px) { .section-padding { padding: 3rem 1rem; } }
+        header { background: #fff; padding: 1rem; display: flex; justify-content: space-between; align-items: center; position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        header img { height: 35px; width: auto; }
 
-        /* 공통 카드 스타일 */
-        .card-style { background: #fff; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.03); }
+        #hero { padding: 8rem 1.5rem 3rem; text-align: center; background-image: radial-gradient(circle at top left, rgba(164, 252, 102, 0.1) 0%, transparent 40%); }
+        .hero-text h1 { font-size: 1.8rem; font-weight: 900; color: var(--primary); line-height: 1.3; }
+        .hero-text h1 span { color: var(--yellow); }
 
-        /* 헤더 스타일 */
-        header { background: #fff; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        header img { height: 40px; width: auto; }
-        .social-icons { display: flex; gap: 10px; }
-        .social-icons a { color: var(--gray); font-size: 1.2rem; text-decoration: none; transition: 0.3s; }
-        .social-icons a:hover { color: var(--primary); }
+        .mode-selector { display: flex; background: rgba(0,0,0,0.05); border-radius: 50px; padding: 5px; margin: 2rem auto; max-width: 350px; }
+        .mode-btn { flex: 1; padding: 12px; border: none; border-radius: 50px; cursor: pointer; font-weight: 700; transition: 0.3s; background: none; color: #888; font-size: 0.9rem; }
+        .mode-btn.active.normal { background: var(--primary); color: #fff; }
+        .mode-btn.active.expert { background: var(--expert-purple); color: #fff; }
 
-        /* 히어로 섹션 (가장 중요) */
-        #hero { padding-top: 10rem; position: relative; overflow: hidden; }
-        #hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: var(--bg); background-image: radial-gradient(circle at top left, rgba(164, 252, 102, 0.1) 0%, transparent 40%), radial-gradient(circle at bottom right, rgba(247, 183, 49, 0.05) 0%, transparent 40%); z-index: -1; }
-        .hero-content { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
-        .hero-text { flex: 1; text-align: left; padding-right: 2rem; }
-        .hero-text h1 { font-size: 3.5rem; font-weight: 900; line-height: 1.2; color: var(--primary); letter-spacing: -2px; }
-        .hero-text h1 span { color: var(--yellow); text-shadow: 0 0 10px rgba(247,183,49,0.5); }
-        .hero-text p { font-size: 1.1rem; color: #555; margin-top: 20px; line-height: 1.6; }
-        .hero-graphics { flex: 1; position: relative; }
+        .timer-display { background: var(--dark-teal); border-radius: 30px; padding: 2.5rem 1rem; margin: 0 auto 2rem; border: 5px solid #2a2a2a; width: 100%; max-width: 350px; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); }
+        #timer { font-size: 5.5rem; font-weight: 900; color: var(--yellow); font-variant-numeric: tabular-nums; letter-spacing: -4px; text-shadow: 0 0 15px rgba(247, 183, 49, 0.6); }
 
-        /* 대형 스톱워치 (CSS 그라데이션 및 그림자 활용) */
-        .stopwatch-graphic { width: 300px; height: 300px; background: var(--dark-teal); border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 15px solid #222; box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 20px 50px rgba(0,0,0,0.4); }
-        .stopwatch-graphic .digits { font-size: 5.5rem; font-weight: 900; color: var(--yellow); text-shadow: 0 0 15px rgba(247,183,49,0.8), 0 0 30px rgba(247,183,49,0.5); font-variant-numeric: tabular-nums; letter-spacing: -3px; }
-
-        /* 모바일 대응 (반응형) */
-        @media (max-width: 768px) {
-            #hero { padding-top: 8rem; }
-            .hero-content { flex-direction: column; text-align: center; }
-            .hero-text { text-align: center; padding-right: 0; margin-bottom: 3rem; }
-            .hero-text h1 { font-size: 2.5rem; }
-            .stopwatch-graphic { width: 200px; height: 200px; border-width: 10px; }
-            .stopwatch-graphic .digits { font-size: 3.5rem; letter-spacing: -2px; }
-        }
-
-        /* 정보 카드 섹션 */
-        #info { @extend .section-padding; background: #fff; }
-        .info-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
-        .info-card { @extend .card-style; padding: 2.5rem; text-align: left; position: relative; overflow: hidden; }
-        .info-card::after { content: ''; position: absolute; bottom: -20px; right: -20px; width: 60px; height: 60px; background: rgba(164, 252, 102, 0.1); border-radius: 50%; }
-        .info-card h2 { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 1rem; }
-        .info-card p { font-size: 0.95rem; color: #555; line-height: 1.6; }
-        @media (max-width: 768px) { .info-grid { grid-template-columns: 1fr; } }
-
-        /* 리더보드 섹션 */
-        #leaderboard { @extend .section-padding; background: var(--bg); }
-        .leaderboard-container { max-width: 1200px; margin: 0 auto; }
-        .leaderboard-title { text-align: center; margin-bottom: 3rem; }
-        .leaderboard-title h2 { font-size: 2rem; font-weight: 800; color: var(--primary); }
-        .leaderboard-title p { font-size: 1rem; color: #555; margin-top: 10px; }
-        .leaderboard-table { width: 100%; border-collapse: collapse; @extend .card-style; padding: 1rem; }
-        .leaderboard-table th, .leaderboard-table td { padding: 1rem; text-align: left; border-bottom: 1px solid #eee; }
-        .leaderboard-table th { background: #fafafa; font-weight: 700; color: #555; }
-        .leaderboard-table td.rank { font-weight: 800; color: var(--primary); }
-        .leaderboard-table td.name { font-weight: 600; }
-        .leaderboard-table td.time { font-weight: 700; color: var(--yellow); tabular-nums; }
-        .leaderboard-table td.expert { font-weight: 700; color: var(--expert-purple); }
-
-        /* 경품 섹션 */
-        #prizes { @extend .section-padding; background: #fff; }
-        .prizes-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
-        .prize-card { @extend .card-style; padding: 2.5rem; text-align: left; }
-        .prize-card h3 { font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-bottom: 1rem; }
-        .prize-card p { font-size: 0.9rem; color: #555; line-height: 1.6; }
-        @media (max-width: 768px) { .prizes-grid { grid-template-columns: 1fr; } }
-
-        /* 푸터 스타일 */
-        footer { background: #333; color: #fff; padding: 3rem 1.5rem; text-align: left; font-size: 0.8rem; line-height: 1.6; }
-        footer p { margin-bottom: 5px; }
-        footer a { color: #fff; text-decoration: none; margin-left: 10px; }
-        footer a:hover { color: var(--accent); }
-
-        /* 모드 선택기 - 모바일 터치 최적화 */
-        .mode-selector { display: flex; background: rgba(0,0,0,0.1); border-radius: 50px; padding: 5px; margin: 2.5rem 0; width: fit-content; margin-left: auto; margin-right: auto; }
-        .mode-btn { flex: 1; padding: 15px 30px; border: none; border-radius: 50px; cursor: pointer; font-weight: 700; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: none; color: #888; font-size: 1rem; text-align: center;}
-        .mode-btn small { display: block; font-size: 0.7rem; font-weight: 400; opacity: 0.7; margin-top: 3px; }
-        .mode-btn.active.normal { background: var(--primary); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .mode-btn.active.expert { background: var(--expert-purple); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-
-        /* 타이머 전광판 - 시인성 극대화 */
-        .timer-display { background: var(--dark-teal); border-radius: 30px; padding: 3rem 1rem; margin-bottom: 2.5rem; border: 5px solid #2a2a2a; position: relative; box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 15px 40px rgba(0,0,0,0.3); width: 350px; margin-left: auto; margin-right: auto; }
-        #timer { font-size: 6rem; font-weight: 900; color: var(--yellow); font-variant-numeric: tabular-nums; letter-spacing: -5px; text-shadow: 0 0 15px rgba(247, 183, 49, 0.6); }
-
-        /* 메인 버튼 - 큼직하게 (엄지 최적화) */
-        .btn-main { width: 100%; max-width: 350px; padding: 1.5rem; font-size: 1.6rem; font-weight: 900; border: none; border-radius: 25px; cursor: pointer; background: linear-gradient(135deg, var(--accent), var(--yellow)); color: var(--dark-teal); box-shadow: 0 15px 35px rgba(0,0,0,0.2); transition: all 0.2s; margin-left: auto; margin-right: auto; display: block;}
-        .btn-main:active { transform: scale(0.95); opacity: 0.9; }
+        .btn-main { width: 100%; max-width: 350px; padding: 1.4rem; font-size: 1.5rem; font-weight: 900; border: none; border-radius: 25px; cursor: pointer; background: linear-gradient(135deg, var(--accent), var(--yellow)); color: var(--dark-teal); box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin: 0 auto; display: block; }
         .btn-main.stop { background: #ff4757; color: #fff; }
 
-        /* 다시 도전하기 링크 */
-        .reset-btn { margin-top: 2rem; font-size: 0.95rem; color: #bbb; text-decoration: underline; cursor: pointer; }
-        .reset-btn:hover { color: var(--text); }
+        #leaderboard { padding: 3rem 1rem; max-width: 600px; margin: 0 auto; }
+        .leaderboard-table { width: 100%; background: #fff; border-radius: 20px; border-collapse: collapse; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .leaderboard-table th, td { padding: 12px; text-align: center; border-bottom: 1px solid #eee; }
+        .leaderboard-table th { background: #fafafa; font-size: 0.8rem; color: #888; }
+        .rank { font-weight: 800; color: var(--primary); }
+        .expert-mark { color: var(--expert-purple); font-weight: bold; font-size: 0.75rem; }
 
-        /* 오버레이 (성공/실패) */
-        #overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 129, 112, 0.98); color: #fff; border-radius: 30px; flex-direction: column; justify-content: center; align-items: center; padding: 3rem; box-sizing: border-box; z-index: 100; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(10px); }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-        .success-icon { font-size: 6rem; margin-bottom: 1.5rem; }
-        .success-msg { font-size: 1.3rem; font-weight: 800; line-height: 1.6; word-break: keep-all; }
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 129, 112, 0.98); color: #fff; z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; text-align: center; }
+        .tag-box { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; font-size: 0.85rem; color: var(--accent); line-height: 1.6; margin-top: 20px; text-align: left; }
 
-        /* 종이꽃 애니메이션 (Confetti) */
-        .confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; display: none; }
-        .confetti-piece { position: absolute; width: 10px; height: 10px; background: red; opacity: 0.8; animation: fall 3s ease-out infinite; }
-        @keyframes fall {
-            from { transform: translateY(-10px) rotate(0deg); opacity: 0.8; }
-            to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-        }
-
-        /* 해시태그 복사 가이드 */
-        .tag-box { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; font-size: 0.9rem; color: var(--accent); line-height: 1.8; margin-top: 20px; word-break: keep-all; text-align: left; }
+        .confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1999; display: none; }
+        .confetti-piece { position: absolute; width: 10px; height: 10px; animation: fall 3s linear infinite; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
     </style>
 </head>
 <body>
 
-<header>
-    <img src="logo.jpg" alt="남양주시시장애인복지관">
-    <div class="social-icons">
-        <a href="#" target="_blank">f</a>
-        <a href="#" target="_blank">t</a>
-        <a href="#" target="_blank">y</a>
-        <a href="#" target="_blank">i</a>
-    </div>
-</header>
+<header><img src="logo.jpg" alt="남양주시장애인복지관"></header>
 
 <main>
     <section id="hero">
-        <div class="hero-content">
-            <div class="hero-text">
-                <h1>"4월 20일,<br>우리의 마음이 맞닿는 시간 <span>4.20초</span>"</h1>
-                <p>장애인의 날을 기억하는 가장 즐거운 방법!<br>딱 4.20초에 멈춰주세요. 당신의 순발력이 인식이 됩니다.<br>함께하는 세상, 4.20초의 약속</p>
-            </div>
-            <div class="hero-graphics">
-                <div class="mode-selector">
-                    <button id="modeNormal" class="mode-btn active normal" onclick="setMode('normal')">일반 모드<small>±0.5초 배리어프리 보정</small></button>
-                    <button id="modeExpert" class="mode-btn" onclick="setMode('expert')">고수 모드<small>보정 없음! 완벽한 정지!</small></button>
-                </div>
-
-                <div class="timer-display">
-                    <div id="timer">0.00</div>
-                </div>
-
-                <button id="mainBtn" class="btn-main" onclick="handleButtonClick()">챌린지 시작!</button>
-                <div class="reset-btn" onclick="location.reload()">다시 도전하기</div>
-            </div>
+        <div class="hero-text">
+            <h1>"우리의 마음이<br>맞닿는 시간 <span>4.20초</span>"</h1>
         </div>
-    </div>
 
-    <div id="overlay">
-        <div class="success-icon">🏆</div>
-        <div class="success-msg">축하합니다!<br>4월 20일 장애인의 날을<br>기억해주셔서 감사합니다.</div>
-        <p style="margin-top:20px; font-size:0.9rem; opacity:0.8;">잠시 후 응모 페이지로 연결 중...</p>
-        
-        <div id="expertTags" style="display:none; margin-top:30px; text-align:left;">
-            <p style="font-size:0.85rem; color:#fff; margin-bottom:5px;">👇 <b>댓글</b>에 아래 태그를 복사해서 달아주세요!</p>
-            <div class="tag-box">
-                #남양주시장애인복지관 #4.20챌린지 #고수모드성공 #남양주배리어프리 #스무번의계절_스물한번째약속
-            </div>
+        <div class="mode-selector">
+            <button id="mN" class="mode-btn active normal" onclick="setM('normal')">일반 모드<br><small>모두 다 함께 할 수 있는 모드</small></button>
+            <button id="mE" class="mode-btn" onclick="setM('expert')">고수 모드<br><small>완벽하게 어려운 모드</small></button>
         </div>
-    </div>
 
-    <div id="confetti" class="confetti"></div>
-
-    <section id="info">
-        <div class="info-grid">
-            <div class="info-card">
-                <h2>Why 4.20?</h2>
-                <p>만물이 소생하는 4월, 장애인의 재활 의지를 상징합니다. 20일은 2라는 숫자가 가지는 '함께함'의 의미를 담고 있습니다.</p>
-            </div>
-            <div class="info-card">
-                <h2>참여 방법</h2>
-                <p>일반 모드는 ±0.5초, 고수 모드는 노보정으로 4.20초를 맞춰주세요. 성공 시 네이버 폼으로 응모해 주시면 선물을 드립니다.</p>
-            </div>
-            <div class="info-card">
-                <h2>인식 개선</h2>
-                <p>단순한 게임이 아닙니다. 이 숫자를 맞추기 위해 집중하는 순간, 우리는 서로의 속도에 귀 기울이며 마음의 타이밍을 맞춰갑니다.</p>
-            </div>
+        <div class="timer-display">
+            <div id="timer">0.00</div>
+            <div id="eBadge" style="display:none; color:var(--expert-purple); font-weight:bold; font-size:0.8rem; margin-top:5px;">EXPERT MODE</div>
         </div>
+
+        <button id="mainBtn" class="btn-main" onclick="handle()">챌린지 시작!</button>
+        <p style="margin-top:1.5rem; color:#aaa; text-decoration:underline; font-size:0.85rem;" onclick="location.reload()">다시 하기</p>
     </section>
 
     <section id="leaderboard">
-        <div class="leaderboard-container">
-            <div class="leaderboard-title">
-                <h2>실시간 도전자 현황</h2>
-                <p>지금 이 순간에도 수많은 시민들이 함께하고 있습니다!</p>
-            </div>
-            <table class="leaderboard-table">
-                <thead>
-                    <tr>
-                        <th>순위</th>
-                        <th>닉네임</th>
-                        <th>기록</th>
-                        <th>모드</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboardBody">
-                    </tbody>
-            </table>
-        </div>
-    </section>
-
-    <section id="prizes">
-        <div class="prizes-grid">
-            <div class="prize-card">
-                <h3>특별상 (고수 모드 전용)</h3>
-                <p>노보정 4.20초를 완벽하게 맞춘 최상위 고수 중 추첨을 통해 프리미엄 무선 이어폰을 드립니다.</p>
-            </div>
-            <div class="prize-card">
-                <h3>인식개선상 (일반 모드 전용)</h3>
-                <p>일반 모드 성공자 중 추첨을 통해 복지관 20주년 기념 굿즈 세트를 드립니다.</p>
-            </div>
-            <div class="prize-card">
-                <h3>참가상</h3>
-                <p>이벤트 기간 동안 댓글로 응원 메시지를 남겨주시는 분들 중 추첨을 통해 음료 기프티콘을 드립니다.</p>
-            </div>
-        </div>
+        <h3 style="text-align:center; margin-bottom:1rem; color:var(--primary);">🏆 실시간 고수 랭킹</h3>
+        <table class="leaderboard-table">
+            <thead>
+                <tr><th>순위</th><th>닉네임</th><th>기록</th><th>비고</th></tr>
+            </thead>
+            <tbody id="lBody">
+                <tr><td colspan="4" style="color:#ccc; padding:2rem;">랭킹을 불러오는 중...</td></tr>
+            </tbody>
+        </table>
     </section>
 </main>
 
-<footer>
-    <p>남양주시시장애인복지관 20주년 기념</p>
-    <p>제46회 장애인의 날 챌린지</p>
-    <p>주소: 경기도 남양주시 홍유릉로 301</p>
-    <p>문의: 031-000-0000 | <a href="http://nyjwel.org" target="_blank">nyjwel.org</a></p>
-    <p style="margin-top:20px; opacity:0.5;">본 페이지는 남양주시북부장애인복지관 기획협력지원팀에서 제작했습니다.</p>
-</footer>
+<div id="overlay">
+    <div style="font-size:4rem; margin-bottom:1rem;">🏆</div>
+    <h2 style="font-size:1.5rem; margin-bottom:10px;">성공을 축하합니다!</h2>
+    <p id="waitTxt" style="opacity:0.8;"></p>
+    
+    <div id="eTags" style="display:none;">
+        <p style="font-size:0.85rem; margin-top:20px;">👇 <b>댓글</b>에 아래 태그를 복사해서 달아주세요!</p>
+        <div class="tag-box">
+            #남양주시장애인복지관 #4.20챌린지 #고수모드성공 #남양주배리어프리 #스무번의계절_스물한번째약속
+        </div>
+    </div>
+</div>
 
-<audio id="successSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_062561592c.mp3"></audio>
+<div id="confetti" class="confetti"></div>
+<audio id="snd" src="https://cdn.pixabay.com/audio/2021/08/04/audio_062561592c.mp3"></audio>
 
 <script>
-    // 🔗 폼 주소 이원화 설정
-    const FORM_URL_NORMAL = "https://naver.me/일반모드폼주소"; 
-    const FORM_URL_EXPERT = "https://naver.me/고수모드폼주소"; 
+    // 🔗 해찬 님의 실제 구글 앱스 스크립트 주소 적용
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyc-Yx4zNdLbBA2p9403SZ-6RAbarQ6R9eQNxjAOuJCK5XsyKnGaflq2rVnyLh3cDxRCQ/exec";
+    const NORMAL_FORM = "https://naver.me/일반모드주소";
+    const EXPERT_FORM = "https://naver.me/고수모드주소";
 
     let start, interval, running = false, mode = 'normal';
     const timer = document.getElementById('timer');
     const mainBtn = document.getElementById('mainBtn');
-    const overlay = document.getElementById('overlay');
-    const snd = document.getElementById('successSound');
-    const confetti = document.getElementById('confetti');
+    const lBody = document.getElementById('lBody');
 
-    // 모드 선택기 기능
-    function setMode(m) {
+    // 1. 서버에서 랭킹 불러오기
+    function loadRanks() {
+        fetch(SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+            lBody.innerHTML = '';
+            if(data.length === 0) {
+                lBody.innerHTML = '<tr><td colspan="4" style="padding:2rem; color:#888;">첫 번째 고수가 되어보세요!</td></tr>';
+                return;
+            }
+            data.forEach((row, i) => {
+                lBody.innerHTML += `<tr>
+                    <td class="rank">${i+1}</td>
+                    <td>${row[1]}</td>
+                    <td style="font-weight:bold;">${row[2]}</td>
+                    <td class="expert-mark">고수</td>
+                </tr>`;
+            });
+        }).catch(e => { lBody.innerHTML = '<tr><td colspan="4" style="padding:2rem; color:#ff4757;">랭킹 로드 실패</td></tr>'; });
+    }
+
+    function setM(m) {
         if(running) return;
         mode = m;
-        document.getElementById('modeNormal').classList.toggle('active', m === 'normal');
-        document.getElementById('modeExpert').classList.toggle('active', m === 'expert');
+        document.getElementById('mN').className = 'mode-btn' + (m==='normal'?' active normal':'');
+        document.getElementById('mE').className = 'mode-btn' + (m==='expert'?' active expert':'');
+        document.getElementById('eBadge').style.display = m==='expert' ? 'block' : 'none';
     }
 
-    // 메인 버튼 기능
-    function handleButtonClick() {
-        if (!running) {
-            running = true;
-            start = Date.now();
-            mainBtn.textContent = '지금 정지!'; mainBtn.classList.add('stop');
+    function handle() {
+        if(!running) {
+            running = true; start = Date.now();
+            mainBtn.textContent = 'STOP!'; mainBtn.classList.add('stop');
             interval = setInterval(() => { timer.textContent = ((Date.now()-start)/1000).toFixed(2); }, 10);
         } else {
-            running = false;
-            clearInterval(interval);
-            checkResult();
+            running = false; clearInterval(interval);
+            check();
         }
     }
 
-    // 결과 확인 및 화려한 연출
-    function checkResult() {
-        let t = parseFloat(timer.textContent);
-        let win = false;
+    function check() {
+        let tStr = timer.textContent;
+        let tNum = parseFloat(tStr);
+        let win = (mode === 'normal') ? (tNum >= 3.70 && tNum <= 4.70) : (tStr === "4.20");
 
-        if (mode === 'normal') {
-            // 일반 모드: ±0.5초 보정 (3.70 ~ 4.70)
-            if (t >= 3.70 && t <= 4.70) { timer.textContent = "4.20"; win = true; }
-        } else {
-            // 고수 모드: 정확히 4.20초 (노보정) 문자열 비교
-            if (timer.textContent === "4.20") { win = true; }
-        }
-
-        if (win) {
-            // 성공 사운드 및 색상 변경
-            timer.style.color = mode === 'normal' ? 'var(--accent)' : 'var(--expert-purple)';
-            timer.style.textShadow = mode === 'normal' ? '0 0 20px rgba(164, 252, 102, 0.8), 0 0 40px rgba(164, 252, 102, 0.5)' : '0 0 20px rgba(165, 94, 234, 0.8), 0 0 40px rgba(165, 94, 234, 0.5)';
+        if(win) {
+            if(mode === 'normal') timer.textContent = "4.20";
+            timer.style.color = mode==='normal' ? 'var(--accent)' : 'var(--expert-purple)';
             mainBtn.style.visibility = 'hidden';
-            try { snd.play(); } catch(e) {}
+            document.getElementById('snd').play();
+            makeConfetti();
 
-            // 종이꽃 애니메이션 (Confetti) 생성
-            createConfetti();
-
-            // 1단계: 기록 박제 (일반 3초, 고수 30초)
-            let waitTime = mode === 'normal' ? 3 : 30;
-            let currentWait = waitTime;
-            const waitMsg = document.createElement('p');
-            waitMsg.id = 'waitTime'; waitMsg.style.fontSize = '0.9rem'; waitMsg.style.marginTop = '10px'; waitMsg.style.opacity = '0.7';
-            timer.parentElement.appendChild(waitMsg);
-            waitMsg.textContent = `기록 인증을 위해 ${currentWait}초간 화면이 유지됩니다.`;
-
-            const cd = setInterval(() => {
-                currentWait--;
-                if(currentWait > 0) waitMsg.textContent = `기록 인증을 위해 ${currentWait}초간 화면이 유지됩니다.`;
-                else {
-                    clearInterval(cd);
-                    timer.parentElement.removeChild(waitMsg);
-
-                    // 2단계: 성공 오버레이 등장
-                    if(mode === 'expert') document.getElementById('expertTags').style.display = 'block';
-                    overlay.style.display = 'flex';
-
-                    // 3단계: 네이버 폼 이동
-                    setTimeout(() => {
-                        window.location.href = mode === 'normal' ? FORM_URL_NORMAL : FORM_URL_EXPERT;
-                    }, 3000);
+            // 고수 모드인 경우 서버에 기록 저장
+            if(mode === 'expert') {
+                const nick = prompt("고수 모드 성공! 리더보드에 등록할 닉네임을 입력하세요.");
+                if(nick) {
+                    fetch(SCRIPT_URL, {
+                        method: "POST",
+                        mode: "no-cors", // CORS 이슈 방지
+                        body: JSON.stringify({ name: nick, time: tStr })
+                    }).then(() => loadRanks());
                 }
-            }, 1000);
+            }
 
+            // 카운트다운 연출
+            let wait = mode === 'normal' ? 3 : 30;
+            const overlay = document.getElementById('overlay');
+            const waitTxt = document.getElementById('waitTxt');
+            
+            const cd = setInterval(() => {
+                waitTxt.innerHTML = `인증을 위해 <b>${wait}초</b>간 화면이 유지됩니다.<br>캡처 후 응모 페이지로 이동합니다.`;
+                if(wait <= 0) {
+                    clearInterval(cd);
+                    if(mode==='expert') document.getElementById('eTags').style.display = 'block';
+                    overlay.style.display = 'flex';
+                    setTimeout(() => { location.href = (mode==='normal'?NORMAL_FORM:EXPERT_FORM); }, 3000);
+                }
+                wait--;
+            }, 1000);
         } else {
             timer.style.color = '#ff4757';
-            timer.style.textShadow = '0 0 10px rgba(255, 71, 87, 0.5)';
-            mainBtn.textContent = '아쉽네요! 다시 도전'; mainBtn.classList.remove('stop');
+            mainBtn.textContent = '다시 도전!'; mainBtn.classList.remove('stop');
         }
     }
 
-    // Confetti 애니메이션 생성 함수
-    function createConfetti() {
-        confetti.style.display = 'block';
-        const colors = ['var(--primary)', 'var(--accent)', 'var(--yellow)', '#ff4757', '#fff'];
-        for (let i = 0; i < 100; i++) {
-            const piece = document.createElement('div');
-            piece.className = 'confetti-piece';
-            piece.style.left = Math.random() * 100 + 'vw';
-            piece.style.backgroundColor = colors[Math.random() * colors.length];
-            piece.style.animationDelay = Math.random() * 1 + 's';
-            piece.style.animationDuration = (Math.random() * 2 + 1) + 's';
-            confetti.appendChild(piece);
+    function makeConfetti() {
+        const c = document.getElementById('confetti');
+        c.style.display = 'block';
+        for(let i=0; i<100; i++) {
+            const p = document.createElement('div');
+            p.className = 'confetti-piece';
+            p.style.left = Math.random()*100+'vw';
+            p.style.backgroundColor = ['#a4fc66','#f7b731','#fff','#008170'][Math.floor(Math.random()*4)];
+            p.style.animationDuration = (Math.random()*2+1)+'s';
+            p.style.animationDelay = Math.random()+'s';
+            c.appendChild(p);
         }
     }
 
-    // 리더보드 시뮬레이션 데이터
-    const dummyNames = ['김남양', '이별내', '박진접', '정화도', '최와부', '배다산', '장오남', '안금곡', '차퇴계', '신양정'];
-    const dummyTimes = ['4.20', '4.20', '3.70', '4.68', '4.20', '4.15', '4.25', '4.20', '4.00', '4.40'];
-    const dummyModes = ['고수', '고수', '일반', '일반', '고수', '일반', '일반', '일반', '일반', '일반'];
-
-    const leaderboardBody = document.getElementById('leaderboardBody');
-    for (let i = 0; i < 10; i++) {
-        const row = document.createElement('tr');
-        row.innerHTML = `<td class="rank">${i+1}</td><td class="name">${dummyNames[i]}</td><td class="time">${dummyTimes[i]}</td><td class="${dummyModes[i] === '고수' ? 'expert' : ''}">${dummyModes[i]} 모드</td>`;
-        leaderboardBody.appendChild(row);
-    }
+    window.onload = loadRanks;
 </script>
-
 </body>
 </html>
