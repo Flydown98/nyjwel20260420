@@ -7,46 +7,90 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
         :root {
-            --primary: #008170; --accent: #a4fc66; --yellow: #f7b731;
-            --dark-teal: #0c433c; --bg: #f8f9fa; --text: #333;
-            --expert-purple: #a55eea; --perfect-gold: #fff200;
+            --primary: #008170; /* 짙은 청록 */
+            --primary-light: #00c6ff; /* 밝은 시안 */
+            --accent: #a4fc66; /* 연두색 */
+            --yellow: #f7b731; /* 스톱워치 텍스트 */
+            --bg-top: #e0f7fa; /* 상단 배경 그라데이션 */
+            --bg-bottom: #ffffff;
+            --text-main: #222;
+            --text-sub: #666;
+            --expert-purple: #a55eea;
+            --stopwatch-bg: #111827;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg); color: var(--text); user-select: none; overflow-x: hidden; transition: background-color 0.4s; }
+        body { font-family: 'Pretendard', sans-serif; background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 40%); color: var(--text-main); user-select: none; overflow-x: hidden; min-height: 100vh; transition: background 0.3s; }
 
-        header { background: #fff; padding: 1rem; display: flex; justify-content: center; align-items: center; position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        /* 실패 시 배경색 제어용 클래스 */
+        body.fail-bg { background: #ffebee !important; }
+
+        header { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(5px); padding: 1rem; display: flex; justify-content: center; align-items: center; position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         header img { height: 35px; width: auto; }
 
-        #hero { padding: 8rem 1.5rem 3rem; text-align: center; }
-        .hero-text h1 { font-size: 1.8rem; font-weight: 900; color: var(--primary); margin-bottom: 1rem; }
-        .hero-text span { color: var(--yellow); }
+        .app-container { max-width: 480px; margin: 0 auto; padding: 6rem 1.5rem 3rem; text-align: center; }
 
-        .mode-selector { display: flex; background: rgba(0,0,0,0.05); border-radius: 50px; padding: 5px; margin: 0 auto 2rem; max-width: 350px; }
+        /* 타이틀 섹션 */
+        .title-area { margin-bottom: 2rem; }
+        .title-area h2 { font-size: 1.1rem; color: var(--primary); font-weight: 700; margin-bottom: 5px; }
+        .title-area h1 { font-size: 2rem; font-weight: 900; line-height: 1.3; color: var(--text-main); letter-spacing: -1px; }
+        .title-area h1 span { color: var(--primary); }
+        .title-area p { font-size: 0.9rem; color: var(--text-sub); margin-top: 10px; line-height: 1.5; }
+
+        /* 모드 선택 탭 */
+        .mode-selector { display: flex; background: #fff; border-radius: 50px; padding: 5px; margin: 0 auto 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .mode-btn { flex: 1; padding: 12px; border: none; border-radius: 50px; cursor: pointer; font-weight: 700; transition: 0.3s; background: none; color: #888; font-size: 0.9rem; }
-        .mode-btn.active.normal { background: var(--primary); color: #fff; }
-        .mode-btn.active.expert { background: var(--expert-purple); color: #fff; }
+        .mode-btn.active.normal { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(0, 129, 112, 0.3); }
+        .mode-btn.active.expert { background: var(--expert-purple); color: #fff; box-shadow: 0 4px 10px rgba(165, 94, 234, 0.3); }
 
-        .timer-display { background: var(--dark-teal); border-radius: 30px; padding: 2.5rem 1rem; margin: 0 auto 2rem; border: 5px solid #2a2a2a; width: 100%; max-width: 350px; position: relative; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); }
-        #timer { font-size: 5rem; font-weight: 900; color: var(--yellow); font-variant-numeric: tabular-nums; letter-spacing: -4px; text-shadow: 0 0 15px rgba(247, 183, 49, 0.6); }
+        /* 이미지 스타일의 대형 스톱워치 */
+        .stopwatch-wrapper {
+            background: var(--stopwatch-bg);
+            width: 260px; height: 260px;
+            margin: 0 auto 2rem;
+            border-radius: 50%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 8px solid #2d3748;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15), inset 0 0 30px rgba(0,0,0,0.6);
+            position: relative;
+        }
+        /* 스톱워치 꼭대기 버튼 디자인 */
+        .stopwatch-wrapper::before { content:''; position:absolute; top:-25px; left:50%; transform:translateX(-50%); width:40px; height:18px; background:#4a5568; border-radius:5px 5px 0 0; }
+        .stopwatch-wrapper::after { content:''; position:absolute; top:-12px; left:50%; transform:translateX(-50%); width:60px; height:6px; background:#2d3748; border-radius:3px; }
+        
+        #timer { font-size: 4.5rem; font-weight: 900; color: var(--primary-light); font-variant-numeric: tabular-nums; letter-spacing: -2px; text-shadow: 0 0 20px rgba(0, 198, 255, 0.5); z-index: 10; margin-top: 15px; transition: color 0.3s; }
+        #eBadge { font-size: 0.8rem; color: var(--expert-purple); font-weight: bold; margin-top: 5px; z-index: 10; background: rgba(165,94,234,0.2); padding: 3px 10px; border-radius: 10px; }
 
-        .btn-main { width: 100%; max-width: 350px; padding: 1.4rem; font-size: 1.5rem; font-weight: 900; border: none; border-radius: 25px; cursor: pointer; background: linear-gradient(135deg, var(--accent), var(--yellow)); color: var(--dark-teal); box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin: 0 auto; display: block; }
-        .btn-main.stop { background: #ff4757 !important; color: #fff !important; }
+        /* 메인 버튼 */
+        .btn-main { width: 100%; padding: 1.2rem; font-size: 1.3rem; font-weight: 800; border: none; border-radius: 50px; cursor: pointer; background: linear-gradient(to right, #008170, #00c6ff); color: #fff; box-shadow: 0 10px 20px rgba(0, 198, 255, 0.3); transition: transform 0.2s; }
+        .btn-main:active { transform: scale(0.96); }
+        .btn-main.stop { background: #ff4757 !important; box-shadow: 0 10px 20px rgba(255, 71, 87, 0.3) !important; }
 
-        #leaderboard { padding: 2rem 1.2rem; max-width: 600px; margin: 0 auto; }
-        .leaderboard-table { width: 100%; background: #fff; border-radius: 25px; border-collapse: collapse; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .leaderboard-table th, td { padding: 12px; text-align: center; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        /* 캡처 유도 UI (성공 시 버튼 자리에 등장) */
+        #captureUI { display: none; background: #f0fdf4; border: 2px dashed var(--primary); padding: 1.2rem; border-radius: 20px; color: var(--primary); font-weight: bold; animation: pulse 1.5s infinite; margin-top: -10px; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
-        #infoModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: #fff; width: 100%; max-width: 400px; padding: 2rem; border-radius: 30px; }
-        .input-group { margin-bottom: 12px; text-align: left; }
-        .input-group label { display: block; font-size: 0.8rem; color: #666; margin-bottom: 4px; font-weight: 600; }
-        .input-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-size: 1rem; }
-        .btn-submit { width: 100%; padding: 15px; background: var(--primary); color: #fff; border: none; border-radius: 15px; font-weight: bold; cursor: pointer; font-size: 1.1rem; margin-top: 10px; }
+        /* 실패 복구 버튼 */
+        #retryBtn { margin-top:1.5rem; color:#888; text-decoration:underline; cursor:pointer; font-size:0.9rem; display:none; font-weight: bold; }
 
-        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); color: #fff; z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; text-align: center; }
+        /* 리더보드 */
+        .leaderboard-section { margin-top: 3rem; background: #fff; border-radius: 30px; padding: 2rem 1.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.04); }
+        .leaderboard-section h3 { font-size: 1.2rem; color: var(--primary); font-weight: 800; margin-bottom: 1.5rem; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .leaderboard-table { width: 100%; border-collapse: collapse; }
+        .leaderboard-table th, td { padding: 12px 5px; text-align: center; border-bottom: 1px solid #f1f1f1; font-size: 0.95rem; }
+        .leaderboard-table th { color: #888; font-weight: 600; font-size: 0.85rem; }
+
+        /* 정보 입력 모달 (캡처 시간이 끝난 후 등장) */
+        #infoModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 3000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(3px); }
+        .modal-content { background: #fff; width: 100%; max-width: 380px; padding: 2.5rem 2rem; border-radius: 30px; text-align: left; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.85rem; color: #555; margin-bottom: 6px; font-weight: 700; }
+        .input-group input { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 1rem; background: #f8fafc; transition: 0.3s; }
+        .input-group input:focus { outline: none; border-color: var(--primary); background: #fff; }
+        .btn-submit { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; font-size: 1.1rem; margin-top: 15px; }
+
         .confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1999; display: none; }
-        .confetti-piece { position: absolute; width: 10px; height: 10px; animation: fall 3s linear infinite; }
+        .confetti-piece { position: absolute; width: 10px; height: 15px; animation: fall 3s linear infinite; }
         @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
     </style>
 </head>
@@ -54,45 +98,58 @@
 
 <header><img src="logo.jpg" alt="남양주시장애인복지관"></header>
 
-<main id="mainUI">
-    <section id="hero">
-        <div class="hero-text"><h1>우리의 마음이<br>맞닿는 시간 <span>4.20초</span></h1></div>
-        <div class="mode-selector">
-            <button id="mN" class="mode-btn active normal" onclick="setMode('normal')">일반 모드</button>
-            <button id="mE" class="mode-btn" onclick="setMode('expert')">고수 모드</button>
-        </div>
-        <div class="timer-display"><div id="timer">0.00</div></div>
-        <button id="mainBtn" class="btn-main" onclick="handle()">챌린지 시작!</button>
-        <p id="retryBtn" style="margin-top:1.5rem; color:#aaa; text-decoration:underline; cursor:pointer; display:none;" onclick="resetGame()">다시 도전하기</p>
-    </section>
+<div class="app-container">
+    <div class="title-area">
+        <h2>"모두가 누리는 당연한 일상"</h2>
+        <h1>제46회 장애인의 날 기념<br><span>4.20 챌린지</span></h1>
+        <p>정확히 4.20초에 스톱워치를 멈춰주세요!<br>성공 화면을 캡처하면 특별한 선물이 기다립니다.</p>
+    </div>
 
-    <section id="leaderboard">
-        <h3 style="text-align:center; margin-bottom:1rem; color:var(--primary); font-weight:900;">🏆 실시간 고수 랭킹</h3>
+    <div class="mode-selector">
+        <button id="mN" class="mode-btn active normal" onclick="setMode('normal')">일반 모드</button>
+        <button id="mE" class="mode-btn" onclick="setMode('expert')">고수 모드</button>
+    </div>
+
+    <div class="stopwatch-wrapper">
+        <div id="timer">0.00</div>
+        <div id="eBadge" style="display:none;">EXPERT: 0.000s</div>
+    </div>
+
+    <button id="mainBtn" class="btn-main" onclick="handle()">지금 바로 도전하기</button>
+    
+    <div id="captureUI">
+        <div style="font-size:1.5rem; margin-bottom:5px;">📸</div>
+        <div id="captureCount"></div>
+    </div>
+
+    <p id="retryBtn" onclick="resetGame()">다시 도전하기</p>
+
+    <div class="leaderboard-section">
+        <h3>🏆 실시간 고수 랭킹</h3>
         <table class="leaderboard-table">
             <thead><tr><th>순위</th><th>닉네임</th><th>기록</th></tr></thead>
-            <tbody id="lBody"><tr><td colspan="3">랭킹 로드 중...</td></tr></tbody>
+            <tbody id="lBody"><tr><td colspan="3">데이터 로딩 중...</td></tr></tbody>
         </table>
-    </section>
-</main>
-
-<div id="infoModal">
-    <div class="modal-content">
-        <h3 style="color:var(--primary); margin-bottom:1.5rem; text-align:center;">🎊 성공! 정보 입력 🎊</h3>
-        <div class="input-group"><label>성함</label><input type="text" id="uName"></div>
-        <div class="input-group"><label>연락처</label><input type="text" id="uPhone" placeholder="010-0000-0000"></div>
-        <div class="input-group"><label>주소</label><input type="text" id="uAddr" placeholder="경품 수령 주소"></div>
-        <label style="font-size:0.75rem; color:#888; display:flex; align-items:center; margin:10px 0;">
-            <input type="checkbox" id="uConsent" style="margin-right:5px;"> 개인정보 수집 및 활용에 동의합니다.
-        </label>
-        <button class="btn-submit" onclick="submitData()">기록 등록하기</button>
     </div>
 </div>
 
-<div id="overlay">
-    <div style="font-size:4rem; margin-bottom:1rem;">🏆</div>
-    <h2 id="winTitle" style="margin-bottom:1rem;">성공을 축하합니다!</h2>
-    <p id="waitTxt"></p>
-    <button id="finalReset" style="display:none; margin-top:2rem; padding:12px 30px; border-radius:50px; border:none; background:#fff; color:var(--primary); font-weight:bold;" onclick="location.reload()">처음으로</button>
+<div id="infoModal">
+    <div class="modal-content">
+        <h3 style="color:var(--primary); margin-bottom:1.5rem; text-align:center; font-weight:900;">🎊 기록 등록 🎊</h3>
+        <p style="font-size:0.85rem; color:#666; text-align:center; margin-bottom:1.5rem;">캡처를 완료하셨나요?<br>명예의 전당과 경품 발송을 위해 정보를 입력해주세요.</p>
+        
+        <div class="input-group"><label>성함</label><input type="text" id="uName" placeholder="실명을 입력해주세요"></div>
+        <div class="input-group"><label>연락처</label><input type="text" id="uPhone" placeholder="010-0000-0000"></div>
+        <div class="input-group"><label>주소</label><input type="text" id="uAddr" placeholder="경품 수령 상세 주소"></div>
+        
+        <label style="font-size:0.75rem; color:#888; display:flex; align-items:flex-start; margin:15px 0; line-height:1.4;">
+            <input type="checkbox" id="uConsent" style="margin-right:8px; margin-top:2px;">
+            <span>[필수] 개인정보 수집 및 활용에 동의합니다. 수집된 정보는 이벤트 종료 시 안전하게 파기됩니다.</span>
+        </label>
+        
+        <button class="btn-submit" onclick="submitData()">명예의 전당 등록하기</button>
+        <button style="width:100%; background:none; border:none; color:#aaa; margin-top:15px; cursor:pointer; font-weight:bold;" onclick="closeModal()">취소하고 메인으로</button>
+    </div>
 </div>
 
 <div id="confetti" class="confetti"></div>
@@ -107,18 +164,19 @@
     const timer = document.getElementById('timer');
     const mainBtn = document.getElementById('mainBtn');
     const lBody = document.getElementById('lBody');
+    const captureUI = document.getElementById('captureUI');
+    const captureCount = document.getElementById('captureCount');
 
-    // 랭킹 불러오기
     function loadRanks() {
         fetch(SCRIPT_URL + "?t=" + new Date().getTime())
         .then(res => res.json())
         .then(data => {
             lBody.innerHTML = '';
-            if(data.length === 0) { lBody.innerHTML = '<tr><td colspan="3">첫 주인공이 되어보세요!</td></tr>'; return; }
+            if(data.length === 0) { lBody.innerHTML = '<tr><td colspan="3" style="color:#888;">첫 주인공이 되어보세요!</td></tr>'; return; }
             data.forEach((row, i) => {
-                lBody.innerHTML += `<tr><td>${i+1}</td><td>${row.name}</td><td>${row.time}</td></tr>`;
+                lBody.innerHTML += `<tr><td style="font-weight:900; color:var(--primary);">${i+1}</td><td style="font-weight:600;">${row.name}</td><td style="font-weight:bold; color:var(--expert-purple);">${row.time}</td></tr>`;
             });
-        }).catch(() => { lBody.innerHTML = '<tr><td colspan="3">랭킹 로드 실패</td></tr>'; });
+        });
     }
 
     function setMode(m) {
@@ -126,6 +184,7 @@
         mode = m;
         document.getElementById('mN').classList.toggle('active', m === 'normal');
         document.getElementById('mE').classList.toggle('active', m === 'expert');
+        document.getElementById('eBadge').style.display = m === 'expert' ? 'block' : 'none';
         timer.textContent = m === 'normal' ? "0.00" : "0.000";
     }
 
@@ -150,50 +209,57 @@
 
         if(win) {
             if(mode === 'normal') timer.textContent = "4.20";
-            timer.style.color = 'var(--accent)';
-            mainBtn.style.visibility = 'hidden';
+            
+            // 성공 시 스톱워치 숫자 색상 변경 (시안색 -> 골드/연두색)
+            timer.style.color = mode === 'expert' && timer.textContent === "4.200" ? 'var(--yellow)' : 'var(--accent)';
+            timer.style.textShadow = '0 0 20px rgba(164, 252, 102, 0.8)';
+            
+            mainBtn.style.display = 'none'; // 버튼 숨기기
+            captureUI.style.display = 'block'; // 캡처 안내 UI 표시
             
             if(mode === 'expert' && timer.textContent === "4.200") {
                 document.getElementById('sndFan').play().catch(()=>{});
-                document.getElementById('winTitle').textContent = "🎯 완벽한 성공!!!";
             } else {
                 document.getElementById('sndNormal').play().catch(()=>{});
             }
 
             makeConfetti();
-            document.getElementById('overlay').style.display = 'flex';
 
-            let wait = mode === 'normal' ? 3 : 30;
-            const waitTxt = document.getElementById('waitTxt');
+            let wait = mode === 'normal' ? 5 : 30; // 일반은 5초 캡처타임, 고수는 30초
             
             const cd = setInterval(() => {
-                waitTxt.innerHTML = `인증을 위해 <b>${wait}초</b>간 화면이 유지됩니다.`;
+                captureCount.innerHTML = `지금 이 화면을 캡처하세요!<br><b>${wait}초</b> 후 등록 창으로 이동합니다.`;
                 if(wait <= 0) {
                     clearInterval(cd);
+                    captureUI.style.display = 'none';
                     if(mode === 'normal') location.href = NORMAL_FORM;
-                    else {
-                        document.getElementById('overlay').style.display = 'none';
-                        document.getElementById('infoModal').style.display = 'flex';
-                    }
+                    else document.getElementById('infoModal').style.display = 'flex';
                 }
                 wait--;
             }, 1000);
         } else {
+            // 실패 연출
             timer.style.color = '#ff4757';
-            document.body.style.backgroundColor = '#4a0000';
-            mainBtn.textContent = '실패! 다시 도전';
+            timer.style.textShadow = '0 0 20px rgba(255, 71, 87, 0.5)';
+            document.body.classList.add('fail-bg'); // 붉은 배경 클래스 추가
+            mainBtn.textContent = '아쉽네요! 다시 도전';
+            mainBtn.classList.remove('stop');
             document.getElementById('retryBtn').style.display = 'block';
         }
     }
 
+    // 실패 상태에서 다시 처음으로 복구
     function resetGame() {
-        document.body.style.backgroundColor = 'var(--bg)';
-        timer.style.color = 'var(--yellow)';
+        document.body.classList.remove('fail-bg'); // 배경색 원래대로
+        timer.style.color = 'var(--primary-light)'; // 스톱워치 텍스트 색상 원래대로
+        timer.style.textShadow = '0 0 20px rgba(0, 198, 255, 0.5)';
         timer.textContent = mode === 'normal' ? "0.00" : "0.000";
-        mainBtn.textContent = '챌린지 시작!';
+        mainBtn.textContent = '지금 바로 도전하기';
         mainBtn.classList.remove('stop');
-        mainBtn.style.visibility = 'visible';
+        mainBtn.style.display = 'block';
         document.getElementById('retryBtn').style.display = 'none';
+        captureUI.style.display = 'none';
+        document.getElementById('confetti').style.display = 'none';
     }
 
     function submitData() {
@@ -205,21 +271,17 @@
         if(!name || !phone || !addr || !consent) { alert("모든 정보를 입력하고 동의해주세요."); return; }
 
         const btn = document.querySelector('.btn-submit');
-        btn.textContent = "등록 중..."; btn.disabled = true;
+        btn.textContent = "서버 전송 중..."; btn.disabled = true;
 
         fetch(SCRIPT_URL, {
             method: "POST", mode: "no-cors",
             body: JSON.stringify({ name, phone, address: addr, time: timer.textContent, consent: "동의" })
         }).then(() => {
-            alert("기록이 성공적으로 등록되었습니다!");
-            document.getElementById('infoModal').style.display = 'none';
-            document.getElementById('overlay').style.display = 'flex';
-            document.getElementById('winTitle').textContent = "등록 완료!";
-            document.getElementById('waitTxt').textContent = "장애인의 날 챌린지에 참여해주셔서 감사합니다.";
-            document.getElementById('finalReset').style.display = 'block';
-            loadRanks();
+            alert("명예의 전당에 성공적으로 등록되었습니다!");
+            closeModal();
+            loadRanks(); // 랭킹 갱신
         }).catch(() => {
-            alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+            alert("일시적인 오류가 발생했습니다. 다시 시도해주세요.");
             btn.textContent = "다시 시도"; btn.disabled = false;
         });
     }
@@ -232,10 +294,16 @@
             const p = document.createElement('div');
             p.className = 'confetti-piece';
             p.style.left = Math.random()*100+'vw';
-            p.style.backgroundColor = ['#a4fc66','#f7b731','#fff','#008170'][Math.floor(Math.random()*4)];
+            p.style.backgroundColor = ['#00c6ff','#008170','#a4fc66','#f7b731'][Math.floor(Math.random()*4)];
             p.style.animationDuration = (Math.random()*2+1)+'s';
+            p.style.animationDelay = Math.random()*0.5+'s';
             c.appendChild(p);
         }
+    }
+
+    function closeModal() {
+        document.getElementById('infoModal').style.display = 'none';
+        resetGame(); // 창 닫으면 완전히 처음 상태로 리셋
     }
 
     window.onload = loadRanks;
