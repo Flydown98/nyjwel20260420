@@ -207,7 +207,8 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwx7d2qVoazY8_1g5iLNkwb0YxMIgQa8tkedSGRLe97LeEU6_YvhQKwB93ouc0hcwoYrg/exec";
 
-    let start, interval, running = false, failed = false, mode = 'normal';
+    // 카운트다운을 도중에 멈출 수 있도록 countdownInterval 변수를 추가했습니다.
+    let start, interval, countdownInterval, running = false, failed = false, mode = 'normal';
     const timer = document.getElementById('timer');
     const mainBtn = document.getElementById('mainBtn');
     const lBody = document.getElementById('lBody');
@@ -261,7 +262,8 @@
     }
 
     function handle() {
-        if(failed) { resetGame(); return; }
+        // 실패했거나, 캡처 화면(성공)이 떠있는 상태에서 버튼을 누르면 무조건 리셋되도록 수정
+        if(failed || captureUI.style.display === 'block') { resetGame(); return; }
 
         if(!running) {
             running = true; start = Date.now();
@@ -287,7 +289,14 @@
             if(mode === 'normal') timer.textContent = "4.20";
             
             timer.style.textShadow = '0 0 25px rgba(0, 164, 228, 0.8)';
-            mainBtn.style.display = 'none'; 
+            
+            // 성공 시 버튼을 숨기지 않고 다시하기 기능으로 전환
+            mainBtn.textContent = '기록 포기하고 다시 도전하기 ↻';
+            mainBtn.style.background = '#94a3b8'; // 캡처에 방해 안 되게 회색 처리
+            mainBtn.style.boxShadow = 'none';
+            mainBtn.classList.remove('stop');
+            mainBtn.style.display = 'block'; 
+            
             captureUI.style.display = 'block'; 
             
             if(isPerfect) {
@@ -305,11 +314,15 @@
             document.getElementById('modalTitle').textContent = mode === 'normal' ? "🎊 이벤트 응모 🎊" : "👑 명예의 전당 등록 👑";
             document.getElementById('hashtagArea').style.display = mode === 'expert' ? 'block' : 'none';
             
-            const cd = setInterval(() => {
+            // 혹시 남아있을지 모를 카운트다운 초기화
+            clearInterval(countdownInterval);
+            
+            countdownInterval = setInterval(() => {
                 captureCount.innerHTML = `지금 이 화면을 캡처하세요!<br><b>${wait}초</b> 후 등록 창으로 이동합니다.`;
                 if(wait <= 0) {
-                    clearInterval(cd);
+                    clearInterval(countdownInterval);
                     captureUI.style.display = 'none';
+                    mainBtn.style.display = 'none'; // 모달이 뜰 때는 버튼 숨김
                     document.getElementById('infoModal').style.display = 'flex';
                 }
                 wait--;
@@ -320,20 +333,29 @@
             timer.style.textShadow = '0 0 20px rgba(255, 71, 87, 0.5)';
             document.body.classList.add('fail-bg'); 
             mainBtn.textContent = '다시 도전하기 (리셋)';
+            mainBtn.style.background = ''; // 색상 초기화
+            mainBtn.style.boxShadow = '';
             mainBtn.classList.remove('stop');
         }
     }
 
     function resetGame() {
         failed = false;
+        clearInterval(countdownInterval); // 카운트다운 타이머 완벽하게 정지
+        
         document.body.classList.remove('fail-bg'); 
         timer.style.color = 'var(--nyj-sky)'; 
         timer.style.textShadow = '0 0 20px rgba(0, 164, 228, 0.5)';
         timer.textContent = mode === 'normal' ? "0.00" : "0.000";
         document.getElementById('perfectLabel').style.display = 'none';
+        
+        // 메인 버튼 스타일을 원래의 파란색 '도전 시작!'으로 복구
         mainBtn.textContent = '도전 시작!';
+        mainBtn.style.background = ''; 
+        mainBtn.style.boxShadow = '';
         mainBtn.classList.remove('stop');
         mainBtn.style.display = 'block';
+        
         captureUI.style.display = 'none';
         document.getElementById('confetti').style.display = 'none';
     }
